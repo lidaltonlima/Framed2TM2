@@ -1,9 +1,10 @@
 program main
-    use StructureNode
+    use Example, only: Vetor2D
     implicit none
-    type(Node) :: n1
 
-    n1 = Node(5., 3.)
+    type(Vetor2D) :: v1
 
-    print *, n1
+    v1 = Vetor2D(1d0, 2d0)
+
+    print *, v1%x
 end program main

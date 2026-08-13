@@ -10,7 +10,7 @@
     <meta name="author" content="Lidalton S. de Lima" >
     <link rel="icon" href="../favicon.png">
 
-    <title>Node &ndash; Framed Structures </title>
+    <title>Example &ndash; Framed Structures</title>
 
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -80,8 +80,8 @@
 
     <div class="container">
   <div class="row">
-    <h1>Node
-      <small>Derived Type</small>
+    <h1>Example
+      <small>Module</small>
       
     </h1>
       <div class="container p-2 mb-4 bg-light border rounded-3">
@@ -91,21 +91,20 @@
 
             <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
               <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
-                 title="<p>40.0% of total for derived types.</p>Including implementation: 4 statements, 23.5% of total for derived types.">4 statements</a>
+                 title="77.4% of total for modules and submodules.">24 statements</a>
             </li>
 
             <li class="list-inline-item" id="source-file">
               <i class="fa fa-code"></i>
-              <a href="../src/ElementNode.f90"> Source File</a>
+              <a href="../src/Example.f90"> Source File</a>
             </li>
         </ul>
       </div>
       <div class="col">
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb justify-content-end mb-0">
-                <li class="breadcrumb-item"><a href='..\sourcefile\elementnode.f90.html'>ElementNode.f90</a></li>
-                <li class="breadcrumb-item"><a href='..\module\elementnode.html'>ElementNode</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Node</li>
+                <li class="breadcrumb-item"><a href='..\sourcefile\example.f90.html'>Example.f90</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Example</li>
           </ol>
         </nav>
       </div>
@@ -120,35 +119,46 @@
   </script>
 
   </div>
-  
+
   <div class="row">
-    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
-      <div id="sidebar">
+    <div class="col-md-3">
+        <div id="sidebar">
       <h3>Contents</h3>
   
+  
+  
+  
+  
+  
+  
+  
+  
+  
       <div class="card mb-4">
-      <a data-bs-toggle="collapse" href="#vars-0"
-         aria-expanded="false" aria-controls="vars-0">
-         <h4 class="card-header bg-primary text-white">Variables</h4>
+      <a data-bs-toggle="collapse" href="#types-0"
+         aria-expanded="false" aria-controls="types-0">
+         <h4 class="card-header bg-primary text-white">Derived Types</h4>
       </a>
-      <div id="vars-0" class="collapse">
+      <div id="types-0" class="collapse">
         <div class="list-group list-group-flush">
-            <a class="list-group-item" href="../type/node.html#variable-x~2">x</a>
-            <a class="list-group-item" href="../type/node.html#variable-y~2">y</a>
+            <a class="list-group-item" href="../module/example.html#type-vetor2d">Vetor2D</a>
         </div>
       </div>
     </div>
 
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+      <div class="card mb-4">
+      <a data-bs-toggle="collapse" href="#funcs-0"
+         aria-expanded="false" aria-controls="funcs-0">
+         <h4 class="card-header bg-primary text-white">Functions</h4>
+      </a>
+      <div id="funcs-0" class="collapse">
+        <div class="list-group list-group-flush">
+            <a class="list-group-item" href="../module/example.html#proc-somar_reais">somar_reais</a>
+            <a class="list-group-item" href="../module/example.html#proc-somar_vetores">somar_vetores</a>
+        </div>
+      </div>
+    </div>
+
   
   
   
@@ -162,16 +172,34 @@
   </div>
 
     </div>
-    
-    <div class="col-md-9" id='text'>
-      <h2 id="type-def-statement">
-        type, public :: Node</h2>
-    
-    <br>
 
-    <section>
-    <h2>Components</h2>
-      <table class="table table-striped varlist">
+    <div class="col-md-9" id='text'>
+      
+      
+      
+      <br>
+
+
+
+
+
+
+        <section>
+          <h2>Derived Types</h2>
+              <div class="card">
+    <div class="card-header codesum">
+      <span class="anchor" id="type-vetor2d"></span>
+      <h3>
+        type, public&nbsp;::&nbsp;
+        <a href='..\type\vetor2d.html'>Vetor2D</a>
+        
+      </h3>
+    </div>
+    <div class="card-body">
+      
+
+        <h4>Components</h4>
+          <table class="table table-striped varlist">
     <thead>
       <tr>
         <th scope="col">Type</th>
@@ -183,8 +211,8 @@
     <tbody>
         <tr>
             <td>
-              <span class="anchor" id="variable-x~2"></span>
-              real,
+              <span class="anchor" id="variable-x"></span>
+              real(kind=8),
             </td>
               <td>public</td>
             <td>
@@ -195,13 +223,13 @@
                 <td></td>
                 <td></td>
             <td>
-                
+
             </td>
         </tr>
         <tr>
             <td>
-              <span class="anchor" id="variable-y~2"></span>
-              real,
+              <span class="anchor" id="variable-y"></span>
+              real(kind=8),
             </td>
               <td>public</td>
             <td>
@@ -212,19 +240,159 @@
                 <td></td>
                 <td></td>
             <td>
-                
+
             </td>
         </tr>
     </tbody>
   </table>
 
-    </section>
-    <br>
+
+
+
+        <h4>Type-Bound Procedures</h4>
+        <table class="table table-striped varlist">
+          <tbody>
+              <tr>
+                <td>  procedure, public ::
+  <strong><a href='..\type\vetor2d.html#boundprocedure-somar'>somar</a></strong> => <a href='C:\0 - My Files\Developer\0 - Working Now\fortran\Framed2TM2\doc\proc\somar_vetores.html'>somar_vetores</a></td>
+                  <td><p>Método que soma o vetor atual com outro vetor.</p><a href="../type/vetor2d.html#boundprocedure-somar" class="pull-right"><emph>Read more&hellip;</emph></a></td>
+              </tr>
+          </tbody>
+        </table>
+    </div>
+  </div>
+
+        </section>
+        <br>
+
+        <section>
+          <h2>Functions</h2>
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-somar_reais"></span> <h3>public  function <a href='..\proc\somar_reais.html'>somar_reais</a>(a, b) result(soma)  
+</h3></div>
+    <div class="card-body">
+          
+  
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-a"></span>
+              real(kind=8),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>a</strong></td>
+            <td>
+<p>Primeiro número</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-b"></span>
+              real(kind=8),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>b</strong></td>
+            <td>
+<p>Segundo número</p>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>real(kind=8)</small>
+    </h4>
+    <p>Resultado da soma algébrica</p>
+
+    </div>
+  </div>
+
+              <div class="card">
+    <div class="card-header codesum"><span class="anchor" id="proc-somar_vetores"></span> <h3>public  function <a href='..\proc\somar_vetores.html'>somar_vetores</a>(this, outro) result(resultado)  
+</h3></div>
+    <div class="card-body">
+          
+  <p>Função interna que realiza a soma de dois tipos Vetor2D.</p><a href="../proc/somar_vetores.html" class="pull-right"><emph>Read more&hellip;</emph></a>
+
+  <h4>Arguments</h4>
+      <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-this"></span>
+              class(<a href='..\type\vetor2d.html'>Vetor2D</a>),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>this</strong></td>
+            <td>
+
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-outro"></span>
+              type(<a href='..\type\vetor2d.html'>Vetor2D</a>),
+            </td>
+<td>intent(in)</td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>outro</strong></td>
+            <td>
+
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <h4>
+    Return Value
+    <small>type(<a href='..\type\vetor2d.html'>Vetor2D</a>)</small>
+    </h4>
     
 
+    </div>
+  </div>
+
+        </section>
+        <br>
 
 
-    
+
+
     </div>
   </div>
 

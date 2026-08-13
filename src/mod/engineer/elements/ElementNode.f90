@@ -5,6 +5,4 @@ module ElementNode
         real :: x
         real :: y
     end type
-contains
-
 end module
