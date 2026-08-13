@@ -1,14 +1,14 @@
 module Example
-    !< @brief Módulo para exemplificar documentações.
-    !<
-    !< Apenas exemplifica como documentar adequadamente um código.
+    !! @brief Módulo para exemplificar documentações.
+    !!
+    !! Apenas exemplifica como documentar adequadamente um código.
     implicit none
 
     type Vetor2D
-        !< @brief Tipo derivado que representa um vetor no espaço 2D.
-        !<
-        !< Armazena as coordenadas cartesianas X e Y e fornece
-        !< métodos para manipulação vetorial.
+        !! @brief Tipo derivado que representa um vetor no espaço 2D.
+        !!
+        !! Armazena as coordenadas cartesianas X e Y e fornece
+        !! métodos para manipulação vetorial.
         real(8) :: x !< Coordenada cartesiana do eixo X.
         real(8) :: y !< Coordenada cartesiana do eixo Y.
     contains
