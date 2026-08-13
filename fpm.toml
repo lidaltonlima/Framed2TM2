@@ -1,0 +1,19 @@
+name = "Framed2TM"
+version = "0.1.0"
+license = "license"
+author = "lidaltonlima"
+maintainer = "lidaltonlima@gmail.com"
+copyright = "Copyright 2026, lidaltonlima"
+
+[library]
+source-dir = "src/mod"
+
+[[executable]]
+name = "main"
+source-dir = "src/app"
+main = "main.f90"
+
+[[test]]
+name = "check"
+source-dir = "src/test"
+main = "check.f90"
