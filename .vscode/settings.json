@@ -95,13 +95,16 @@
 
   // Material Icon Theme **************************************************************************
   "material-icon-theme.folders.associations": {
+    "structure": "graphql",
     "engineer": "nuxt",
     "solver": "core",
-    "entities": "delta",
-    "fetch": "download",
-    "reactions": "vercel",
-    "structures": "graphql",
     "dynamic": "generator",
-    "linear": "serverless"
+    "linear": "serverless",
+    "mesh": "app",
+    "entities": "delta",
+    "loads": "download",
+    "supports": "link",
+    "physical": "container",
+    "sizing": "tasks"
   }
 }
