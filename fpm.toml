@@ -6,14 +6,18 @@ maintainer = "lidaltonlima@gmail.com"
 copyright = "Copyright 2026, lidaltonlima"
 
 [library]
-source-dir = "src/mod"
+source-dir = "src"
+
+[preprocess]
+[preprocess.cpp]
+suffixes = ["F90"]
 
 [[executable]]
 name = "main"
-source-dir = "src/app"
+source-dir = "app"
 main = "main.f90"
 
 [[test]]
 name = "check"
-source-dir = "src/test"
+source-dir = "test"
 main = "check.f90"

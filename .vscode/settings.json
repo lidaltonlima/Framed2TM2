@@ -96,10 +96,9 @@
   // Material Icon Theme **************************************************************************
   "material-icon-theme.folders.associations": {
     "engineer": "nuxt",
-    "analysis": "core",
-    "elements": "delta",
+    "solver": "core",
+    "entities": "delta",
     "fetch": "download",
-    "engineering": "nuxt",
     "reactions": "vercel",
     "structures": "graphql",
     "dynamic": "generator",

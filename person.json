@@ -1,0 +1,7 @@
+{
+  "person": {
+    "name": "My name",
+    "age": 36,
+    "active": true
+  }
+}
