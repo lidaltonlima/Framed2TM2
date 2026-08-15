@@ -1,10 +1,18 @@
 program main
+    use Structure
     use EntityNode, only: Node
+    use EntityBar, only: Bar
     implicit none
     type(Node) :: n1, n2
+    type(Bar) :: b1
 
-    n1 = Node(1d0, 2d0)
-    n2 = Node(4d0, 6d0, .true.)
+    call n1%initialize(0d0, 0d0)
+    call n2%initialize(3d0, 4d0)
 
-    print *, n1%distance_to(n2)
+    nodes = [n1, n2]
+
+    call b1%initialize(1, 2)
+
+
+    print *, b1%length()
 end program

@@ -4,19 +4,24 @@ module EntityNode
     private
 
     type, public :: Node
-        real(real64) :: x
-        real(real64) :: y
-        logical :: labeled = .false.
+        real(real64) :: x  !< Coordinate x
+        real(real64) :: y  !< Coordinate y
+        logical :: isLabeled = .false. !< If the node is labeled
     contains
-        procedure :: distance_to
+        procedure :: initialize
     end type
 
 contains
-    function distance_to(this, other) result(distance)
-        class(Node), intent(in) :: this
-        class(Node), intent(in) :: other
-        real(real64) :: distance
+    subroutine initialize(this, x, y, isLabeled)
+        !! Constructor
 
-        distance = sqrt((other%x - this%x)**2 + (other%y - this%y)**2)
-    end function
+        class(Node) :: this
+        real(real64), intent(in) :: x !< Coordinate x
+        real(real64), intent(in) :: y !< Coordinate y
+        logical, intent(in), optional :: isLabeled !< If the node is labeled
+
+        this%x = x
+        this%y = y
+        if (present(isLabeled)) this%isLabeled = isLabeled
+    end subroutine
 end module
