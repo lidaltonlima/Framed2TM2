@@ -20,7 +20,7 @@ main = "main.f90"
 [[test]]
 name = "check"
 source-dir = "test"
-main = "check.f90"
+main = "StructureTest.f90"
 
 [fortran]
 source-form = "default"

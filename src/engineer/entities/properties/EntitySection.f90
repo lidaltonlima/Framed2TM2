@@ -6,9 +6,9 @@ module EntitySection
     type, public :: Section
         !! The entity Section
 
-        integer :: sample = 1  !< Samples for properties
-        real(real64) :: area  !< Area
-        real(real64) :: shear_area_y  !< Shear area in "y" direction
-        real(real64) :: inertia_z !< Inertia around z axis
+        integer :: samples = 1  !< Samples for properties
+        real(real64), allocatable :: A(:)  !< Samples array of area
+        real(real64), allocatable :: Asy(:)  !< Samples array of shear area in "y" direction
+        real(real64), allocatable :: Iz(:) !< Samples array of inertia around z axis
     end type
 end module
