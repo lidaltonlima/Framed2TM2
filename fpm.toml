@@ -21,3 +21,8 @@ main = "main.f90"
 name = "check"
 source-dir = "test"
 main = "check.f90"
+
+[fortran]
+source-form = "default"
+implicit-typing = true
+implicit-external = true
