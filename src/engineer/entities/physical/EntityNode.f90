@@ -4,8 +4,10 @@ module EntityNode
     private
 
     type, public :: Node
-        real(real64) :: x  !< Coordinate x
-        real(real64) :: y  !< Coordinate y
+        !! The node of structure, where the entity connect.
+
+        real(real64) :: x  !< Coordinate **x**
+        real(real64) :: y  !< Coordinate **y**
         logical :: isLabeled = .false. !< If the node is labeled
     contains
         procedure :: initialize

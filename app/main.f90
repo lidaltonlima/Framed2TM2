@@ -5,6 +5,6 @@ program main
 
     call get_structure_data
 
-    print *, sections(1)%A
+    print *, node_loads(1)%Mz
     print *, 'Fortran is working...'
 end program

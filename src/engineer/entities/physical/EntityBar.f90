@@ -15,22 +15,10 @@ module EntityBar
         integer :: end_node  !< Position of end node
 
     contains
-        procedure :: initialize
         procedure :: length
     end type
 
 contains
-    subroutine initialize(this, star_node, end_node)
-        !! Constructor
-
-        class(Bar) :: this
-        integer, intent(in) :: star_node !< Position of start node
-        integer, intent(in) :: end_node  !< Position of snd node
-
-        this%start_node = star_node
-        this%end_node = end_node
-    end subroutine
-
     function length(this)
         !! Calculate length of Bar
 
