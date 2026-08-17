@@ -1,7 +1,7 @@
 module EntityBar
     use iso_fortran_env, only: real64
 
-    use StructureData, only: nodes
+    use Structure_1, only: nodes
 
     implicit none
     private

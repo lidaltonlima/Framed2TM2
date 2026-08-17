@@ -111,7 +111,7 @@ contains
             if (read_stat == 0) then
                 select case (line_label)
                     case ('ndofn')
-                        ndofn = temp_int
+                        qtd_dof_node = temp_int
                     case ('theory')
                         if (temp_int == 0) then
                             theory = 'OB'
