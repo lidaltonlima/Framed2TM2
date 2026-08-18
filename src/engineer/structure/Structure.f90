@@ -13,6 +13,7 @@ module Structure
 
     use StructureControls
     use StructureCalculated
+    use StructureMethods
 
     implicit none
 end module

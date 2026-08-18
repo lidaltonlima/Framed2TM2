@@ -5,6 +5,7 @@ module StructureCalculated
 
     implicit none
 
+    real(real64), allocatable :: Kg(:, :)
     real(real64), allocatable :: Dg(:)
     real(real64), allocatable :: Fg(:)
     real(real64), allocatable :: Rg(:)

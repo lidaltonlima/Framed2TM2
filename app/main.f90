@@ -18,14 +18,14 @@ program main
     allocate(Fg(global_dimension))
     allocate(Rg(global_dimension))
 
+    call calc_Kg
+
 
     block
         integer :: i
-        real(8) :: R(element_dimension, element_dimension)
 
-        R = bars(1)%R()
-        do i = 1, element_dimension
-            write(*, '(*(ES15.4))') R(i, :)
+        do i = 1, global_dimension
+            write(*, '(*(ES10.1))') Kg(i, :)
         end do
     end block
 
