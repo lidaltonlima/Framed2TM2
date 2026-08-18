@@ -17,4 +17,16 @@ program main
     allocate(Dg(global_dimension))
     allocate(Fg(global_dimension))
     allocate(Rg(global_dimension))
+
+
+    block
+        integer :: i
+        real(8) :: kl(element_dimension, element_dimension)
+
+        kl = bars(1)%kl()
+        do i = 1, element_dimension
+            write(*, '(*(ES15.4))') kl(i, :)
+        end do
+    end block
+
 end program
