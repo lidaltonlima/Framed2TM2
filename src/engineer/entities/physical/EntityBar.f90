@@ -9,7 +9,7 @@ module EntityBar
     use StructureControls, only: element_dimension, theory
 
     use GQint, only: intGQ
-    use LinearAlgebra, only: inv_special, LagPol
+    use LinearAlgebra, only: inv_special, LagPol, cross
 
     implicit none
     private
@@ -25,6 +25,7 @@ module EntityBar
     contains
         procedure :: length
         procedure :: kl
+        procedure :: R
     end type
 
     ! =============================================================================================
@@ -79,10 +80,10 @@ contains
         real(real64) :: step  ! Step to get sections samples
         integer :: index
 
-        integer :: samples
-        real(real64) :: nu
-        type(Node) :: start_node
-        type(Node) :: end_node
+        integer :: samples  ! Quantity of section samples
+        real(real64) :: nu  ! Coefficient of Poison
+        type(Node) :: start_node  !< Start node of bar
+        type(Node) :: end_node  !< End node of bar
 
         ! =========================================================================================
         ! Initialization
@@ -154,6 +155,63 @@ contains
         kl(:3, 4:) = fIf
         kl(4:, 4:) = fFf
         kl(4:, :3) = fFi
+    end function
+
+    function R(this)
+        ! =========================================================================================
+        ! Vars statement
+        ! =========================================================================================
+        class(Bar) :: this
+        real(real64), allocatable :: R(:, :)
+
+        ! Aux *************************************************************************************
+        real(real64) :: e_vec(3)
+        real(real64) :: n_vec(3)
+        real(real64) :: x_vec(3)
+        real(real64) :: y_vec(3)
+        real(real64) :: z_vec(3)
+
+        type(Node) :: start_node  !< Start node of bar
+        type(Node) :: end_node  !< End node of bar
+
+        ! =========================================================================================
+        ! Initialization
+        ! =========================================================================================
+        allocate(R(element_dimension, element_dimension))
+        R = 0d0
+
+        start_node = nodes(this%start_node)
+        end_node = nodes(this%end_node)
+        e_vec = [ &
+            end_node%x - start_node%x, &
+            end_node%y - start_node%y, &
+            0d0]
+
+        if (e_vec(1) > 0) then
+            n_vec = [e_vec(1), e_vec(2) + 1, 0d0]
+        else if (e_vec(1) < 0) then
+            n_vec = [e_vec(1), e_vec(2) - 1, 0d0]
+        else
+            if (e_vec(2) > 0) then
+                n_vec = [e_vec(1) - 1, e_vec(2), 0d0]
+            else
+                n_vec = [e_vec(1) + 1, e_vec(2), 0d0]
+            end if
+        end if
+
+        x_vec = e_vec / norm2(e_vec)
+
+        z_vec = cross(x_vec, n_vec)
+        z_vec = z_vec / norm2(z_vec)
+
+        y_vec = cross(z_vec, x_vec)
+
+        R(1, :3) = x_vec
+        R(2, :3) = y_vec
+        R(3, :3) = z_vec
+
+        R(4:, 4:) = R(:3, :3)
+
     end function
 
 

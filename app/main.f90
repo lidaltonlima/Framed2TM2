@@ -21,11 +21,11 @@ program main
 
     block
         integer :: i
-        real(8) :: kl(element_dimension, element_dimension)
+        real(8) :: R(element_dimension, element_dimension)
 
-        kl = bars(1)%kl()
+        R = bars(1)%R()
         do i = 1, element_dimension
-            write(*, '(*(ES15.4))') kl(i, :)
+            write(*, '(*(ES15.4))') R(i, :)
         end do
     end block
 
