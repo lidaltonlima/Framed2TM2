@@ -1,5 +1,5 @@
-module StructureMethods
-    !! All functions and subroutines of structure calculates
+module StructureStiffness
+    !! Functions and subroutines of structure stiffness
 
     use iso_fortran_env, only: real64
 
@@ -12,20 +12,26 @@ module StructureMethods
 
     implicit none
 
+    private
+
+    public :: calc_Kg
+
 contains
     subroutine add_k(K, id)
+        !! Add the stiffness in the global matrix stiffness
+
         ! =========================================================================================
         ! Vars statement
         ! =========================================================================================
         ! I/O *************************************************************************************
-        integer, intent(in) :: id  ! index of element
-        real(real64), allocatable, intent(inout) :: K(:, :)  ! Global stiffness global
+        integer, intent(in) :: id  !< index of element
+        real(real64), allocatable, intent(inout) :: K(:, :)  !< Global stiffness global
 
         ! Auxiliaries *****************************************************************************
-        real(real64), allocatable :: EKg(:, :)  ! element stiffness matrix in global system
-        real(real64) :: Rm(element_dimension, element_dimension)
-        integer :: si, ei  ! start and end index in initial node
-        integer :: sj, ej  ! start and end index in end node
+        real(real64), allocatable :: EKg(:, :)  !< element stiffness matrix in global system
+        real(real64) :: R(element_dimension, element_dimension)  !< Rotation matrix of bar
+        integer :: si, ei  !< start and end index in initial node
+        integer :: sj, ej  !< start and end index in end node
 
         integer :: start_node_id  !< Start node id of bar
         integer :: end_node_id  !< End node id of bar
@@ -33,9 +39,9 @@ contains
         ! =========================================================================================
         ! Calculates
         ! =========================================================================================
-        Rm = bars(id)%R()
+        R = bars(id)%R()
         EKg = bars(id)%kl()
-        EKg = matmul(matmul(transpose(Rm), EKg), Rm)
+        EKg = matmul(matmul(transpose(R), EKg), R)
 
         start_node_id = bars(id)%start_node
         end_node_id = bars(id)%end_node
@@ -61,14 +67,14 @@ contains
         ! Vars statement
         ! =========================================================================================
         ! Aux *************************************************************************************
-        integer :: element  ! index
+        integer :: id  ! Id of bar
 
         allocate(Kg(global_dimension, global_dimension))
 
         Kg = 0d0
 
-        do element = 1, qtd_bars
-            call add_k(Kg, element)
+        do id = 1, qtd_bars
+            call add_k(Kg, id)
         end do
     end subroutine
 end module

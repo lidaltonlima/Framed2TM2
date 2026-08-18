@@ -13,7 +13,8 @@ module Structure
 
     use StructureControls
     use StructureCalculated
-    use StructureMethods
+    use StructureStiffness
+    use StructureLoad
 
     implicit none
 end module

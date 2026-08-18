@@ -19,13 +19,14 @@ program main
     allocate(Rg(global_dimension))
 
     call calc_Kg
+    call calc_Fg
 
 
     block
         integer :: i
 
         do i = 1, global_dimension
-            write(*, '(*(ES10.1))') Kg(i, :)
+            write(*, '(*(ES10.1))') Fg(i)
         end do
     end block
 
