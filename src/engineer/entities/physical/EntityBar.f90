@@ -1,7 +1,7 @@
 module EntityBar
     use iso_fortran_env, only: real64
 
-    use Structure_1, only: nodes
+    use StructureNodes, only: nodes
 
     implicit none
     private
@@ -16,6 +16,7 @@ module EntityBar
 
     contains
         procedure :: length
+        procedure :: kl
     end type
 
 contains
@@ -31,5 +32,13 @@ contains
         dy = nodes(this%end_node)%y - nodes(this%start_node)%y
 
         length = sqrt(dx**2 + dy**2)
+    end function
+
+    function kl(this)
+        class(Bar) :: this
+        real(real64), allocatable :: kl(:, :)
+
+        this%end_node = this%end_node
+        allocate(kl(3, 3))
     end function
 end module

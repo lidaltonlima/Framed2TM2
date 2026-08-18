@@ -1,4 +1,4 @@
-module Structure_1
+module StructureNodes
     !! Module to avoid circular dependency
 
     use EntityNode, only: Node

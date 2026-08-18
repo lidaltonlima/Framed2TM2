@@ -105,6 +105,8 @@
     "loads": "download",
     "supports": "link",
     "physical": "container",
-    "sizing": "tasks"
+    "sizing": "tasks",
+    "JsonFortran": "json",
+    "Lapack": "functions"
   }
 }
