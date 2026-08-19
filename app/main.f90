@@ -1,6 +1,7 @@
 program main
     use TextIO
     use Structure
+    use LinearSolver
     implicit none
 
     ! =============================================================================================
@@ -20,13 +21,13 @@ program main
 
     call calc_Kg
     call calc_Fg
+    call calc_Dg
 
 
     block
         integer :: i
-
         do i = 1, global_dimension
-            write(*, '(*(ES10.1))') Fg(i)
+            write(*, '(*(ES15.4))') Dg(i)
         end do
     end block
 

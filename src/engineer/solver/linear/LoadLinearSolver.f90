@@ -1,4 +1,4 @@
-module StructureLoad
+module LoadLinearSolver
     !! Functions and subroutine for structure load
     use iso_fortran_env, only: real64
 
@@ -10,7 +10,7 @@ module StructureLoad
 
     use StructureControls, only: &
         global_dimension, qtd_node_loads, qtd_dof_node, qtd_node_supports
-    use StructureCalculated, only: Fg
+    use StructureCalculated, only: Fg, Kg
 
     implicit none
     private
@@ -75,6 +75,6 @@ contains
             end if
         end do
 
-        ! Fg = Fg - matmul(Kg, Dp)
+        Fg = Fg - matmul(Kg, Dp)
     end subroutine calc_Fg
 end module

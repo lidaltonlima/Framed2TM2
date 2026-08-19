@@ -1,4 +1,4 @@
-module StructureStiffness
+module StiffnessLinearSolver
     !! Functions and subroutines of structure stiffness
 
     use iso_fortran_env, only: real64
