@@ -111,6 +111,8 @@
     "physical": "container",
     "sizing": "tasks",
     "JsonFortran": "json",
-    "Lapack": "functions"
+    "Lapack": "functions",
+    "materials": "shader",
+    "sections": "cue"
   }
 }
