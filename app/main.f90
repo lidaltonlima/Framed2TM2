@@ -1,7 +1,7 @@
 program main
     use TextIO
     use Structure
-    use LinearSolver
+    use SolverLinear
     implicit none
 
     ! =============================================================================================

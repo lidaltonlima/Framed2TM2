@@ -235,17 +235,17 @@ contains
         ! =========================================================================================
         ! Bound
         ! =========================================================================================
-        qtd_node_supports = count_file_lines('nodes_supports') - 1
+        qtd_nodes_support = count_file_lines('nodes_supports') - 1
 
         ! Allocation ******************************************************************************
-        allocate(node_supports(qtd_node_supports))
+        allocate(node_supports(qtd_nodes_support))
 
         ! Open ************************************************************************************
         call open_data_file('nodes_supports', file_unit)
 
         ! Read ************************************************************************************
         read(file_unit, *) ! titles line
-        do id = 1, qtd_node_supports
+        do id = 1, qtd_nodes_support
             read(file_unit, *) &
                 node_supports(id)%node, &
                 node_supports(id)%Dx, &

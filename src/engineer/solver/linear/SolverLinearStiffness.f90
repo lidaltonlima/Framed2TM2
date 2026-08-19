@@ -1,4 +1,4 @@
-module StiffnessLinearSolver
+module SolverLinearStiffness
     !! Functions and subroutines of structure stiffness
 
     use iso_fortran_env, only: real64
@@ -6,12 +6,11 @@ module StiffnessLinearSolver
     use StructureBars, only: bars
     use StructureNodes, only: nodes
 
-    use StructureCalculated, only: Kg
-    use StructureControls, only: &
+    use Structure, only: &
+        Kg, &
         element_dimension, global_dimension, qtd_bars, qtd_dof_node
 
     implicit none
-
     private
 
     public :: calc_Kg

@@ -1,4 +1,4 @@
-module DisplacementLinearSolver
+module SolverLinearDisplacement
     !! Subroutines to get displacements
 
     use iso_fortran_env, only: real64
@@ -8,7 +8,7 @@ module DisplacementLinearSolver
     use Structure, only: &
         node_supports, &
         Kg, Fg, Dg, &
-        global_dimension, qtd_node_supports, qtd_dof_node
+        global_dimension, qtd_nodes_support, qtd_dof_node
 
     implicit none
     private
@@ -51,7 +51,7 @@ contains
         ! Calculation
         ! =========================================================================================
         ! Add boundary ****************************************************************************
-        do i = 1, qtd_node_supports
+        do i = 1, qtd_nodes_support
             node_support = node_supports(i)
 
             if (node_support%Dx) then
@@ -86,7 +86,7 @@ contains
         if (info /= 0) error stop 'DPOSV - calc_Dg - Displacements: solution system.'
 
         ! Sum the prescribed displacement *********************************************************
-        do i = 1, qtd_node_supports
+        do i = 1, qtd_nodes_support
             node_support = node_supports(i)
 
             if (node_support%Dx) then

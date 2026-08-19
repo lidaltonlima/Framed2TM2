@@ -1,4 +1,4 @@
-module LoadLinearSolver
+module SolverLinearLoad
     !! Functions and subroutine for structure load
     use iso_fortran_env, only: real64
 
@@ -8,14 +8,15 @@ module LoadLinearSolver
     use StructureNodeLoads, only: node_loads
     use StructureNodeSupports, only: node_supports
 
-    use StructureControls, only: &
-        global_dimension, qtd_node_loads, qtd_dof_node, qtd_node_supports
-    use StructureCalculated, only: Fg, Kg
+    use Structure, only: &
+        Fg, Kg, &
+        global_dimension, qtd_node_loads, qtd_dof_node, qtd_nodes_support
 
     implicit none
     private
 
     public :: calc_Fg
+
 contains
     subroutine calc_Fg
         ! =========================================================================================
@@ -56,7 +57,7 @@ contains
         end do
 
         Dp = 0d0
-        do i = 1, qtd_node_supports
+        do i = 1, qtd_nodes_support
             node_support = node_supports(i)
 
             if (node_support%Dx) then
