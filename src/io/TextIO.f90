@@ -114,7 +114,7 @@ contains
             if (read_stat == 0) then
                 select case (line_label)
                     case ('ndofn')
-                        structure%qtd_dof_node = temp_int
+                        structure%dof_per_node = temp_int
                     case ('theory')
                         if (temp_int == 0) then
                             structure%theory = 'OB'

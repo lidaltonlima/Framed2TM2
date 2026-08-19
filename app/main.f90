@@ -2,8 +2,9 @@ program main
     use TextIO
     use structural_model, only: StructuralModel
 
-    use static_analysis_solver, only: static_analysis_solver_exec
-    use static_analysis_results, only: StaticAnalysisResults
+    use static_analysis, only: &
+        static_analysis_solver_exec, &
+        StaticAnalysisResults
 
     implicit none
 
@@ -11,7 +12,7 @@ program main
     ! Vars
     ! =========================================================================
     type(StructuralModel) :: structure
-    type(StaticAnalysisResults) :: static_analysis_results
+    type(StaticAnalysisResults), allocatable :: static_analysis_results
 
     ! =========================================================================
     ! Initialization
@@ -20,5 +21,6 @@ program main
     call get_structure_data(structure)
     call structure%initialize_vars
 
+    allocate(static_analysis_results)
     call static_analysis_solver_exec(structure, static_analysis_results)
 end program

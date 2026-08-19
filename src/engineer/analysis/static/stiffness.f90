@@ -1,4 +1,4 @@
-module SolverLinearStiffness
+module solver_linear_stiffness
     !! Functions and subroutines of structure stiffness
 
     use iso_fortran_env, only: real64
@@ -9,7 +9,7 @@ module SolverLinearStiffness
     implicit none
     private
 
-    public :: solve_stiffness_matrix
+    public :: assemble_stiffness_matrix
 
 contains
     subroutine add_k(structure, K, id)
@@ -25,7 +25,7 @@ contains
 
         ! Auxiliaries *****************************************************************************
         real(real64), allocatable :: EKg(:, :)  !< element stiffness matrix in global system
-        real(real64) :: R(structure%element_dimension, structure%element_dimension)  !< Rotation matrix of bar
+        real(real64) :: R(structure%bar_dimension, structure%bar_dimension)  !< Rotation matrix of bar
         integer :: si, ei  !< start and end index in initial node
         integer :: sj, ej  !< start and end index in end node
 
@@ -35,20 +35,20 @@ contains
         ! =========================================================================================
         ! Calculates
         ! =========================================================================================
-        R = structure%bars(id)%R(structure%nodes, structure%element_dimension)
-        EKg = structure%bars(id)%kl( &
+        R = structure%bars(id)%R(structure%nodes, structure%bar_dimension)
+        EKg = structure%bars(id)%stiffness_matrix_local_system( &
             structure%nodes, structure%materials, structure%sections, &
-            structure%element_dimension, structure%theory)
+            structure%bar_dimension, structure%theory)
         EKg = matmul(matmul(transpose(R), EKg), R)
 
         start_node_id = structure%bars(id)%start_node
         end_node_id = structure%bars(id)%end_node
 
-        si = (structure%qtd_dof_node * (start_node_id - 1)) + 1  ! Start index of initial node
-        ei = si + structure%qtd_dof_node - 1  ! End index of initial node
+        si = (structure%dof_per_node * (start_node_id - 1)) + 1  ! Start index of initial node
+        ei = si + structure%dof_per_node - 1  ! End index of initial node
 
-        sj = (structure%qtd_dof_node * (end_node_id - 1)) + 1  ! Start index of end node
-        ej = sj + structure%qtd_dof_node - 1  ! End index of end node
+        sj = (structure%dof_per_node * (end_node_id - 1)) + 1  ! Start index of end node
+        ej = sj + structure%dof_per_node - 1  ! End index of end node
 
 
         K(si:ei, si:ei) = K(si:ei, si:ei) + EKg(:3, :3)  ! k_ii
@@ -58,7 +58,7 @@ contains
     end subroutine add_k
 
 
-    subroutine solve_stiffness_matrix(structure, results)
+    subroutine assemble_stiffness_matrix(structure, results)
         !! Calculate the global stiffness matrix
 
         ! =========================================================================================
@@ -71,8 +71,12 @@ contains
         ! Aux *************************************************************************************
         integer :: id  ! Id of bar
 
-        allocate(results%stiffness_matrix(structure%global_dimension, structure%global_dimension))
-
+        if (.not. allocated(results%stiffness_matrix)) then
+            allocate( &
+                results%stiffness_matrix( &
+                structure%global_dimension, &
+                structure%global_dimension))
+        end if
         results%stiffness_matrix = 0d0
 
         do id = 1, structure%qtd_bars

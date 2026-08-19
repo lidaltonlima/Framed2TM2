@@ -21,7 +21,7 @@ module EntityBar
 
     contains
         procedure :: length
-        procedure :: kl
+        procedure :: stiffness_matrix_local_system
         procedure :: R
     end type
 
@@ -55,7 +55,9 @@ contains
     end function
 
 
-    function kl(this, nodes, materials, sections, element_dimension, theory)
+    function stiffness_matrix_local_system( &
+        this, nodes, materials, sections, element_dimension, theory &
+        ) result(kl)
         !! Calculate the stiffness matrix of bar in local coordinates
 
         ! =========================================================================================
