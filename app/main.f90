@@ -2,6 +2,7 @@ program main
     use TextIO
     use Structure
     use SolverLinear
+    use structural_model, only: StructuralModel
     implicit none
 
     ! =============================================================================================
@@ -23,7 +24,6 @@ program main
     call calc_Fg
     call calc_Dg
     call calc_Rg
-
 
     block
         integer :: i
