@@ -5,11 +5,7 @@ module SolverLinearReactions
 
     use EntityNodeSupport, only: NodeSupport
 
-    use Structure, only: &
-        node_supports, &
-        Dg, Rg, Fg, Kg, &
-        global_dimension, &
-        qtd_dof_node, qtd_nodes_support
+    use structural_model, only: StructuralModel
 
     implicit none
     private
@@ -17,10 +13,13 @@ module SolverLinearReactions
     public :: calc_Rg
 
 contains
-    subroutine calc_Rg
+    subroutine calc_Rg(structure)
         ! =========================================================================================
         ! Vars Statements
         ! =========================================================================================
+        ! I/O *************************************************************************************
+        type(StructuralModel), intent(inout) :: structure  !< The structural model
+
         ! Control *********************************************************************************
         type(NodeSupport) :: node_support
 
@@ -29,61 +28,61 @@ contains
         integer :: Rz_index
 
         integer :: i, j ! indexes
-        real(real64) :: D_aux(global_dimension)
+        real(real64) :: D_aux(structure%global_dimension)
 
         ! =========================================================================================
         ! Calculation
         ! =========================================================================================
-        D_aux = Dg
-        do i = 1, qtd_nodes_support
-            node_support = node_supports(i)
+        D_aux = structure%Dg
+        do i = 1, structure%qtd_nodes_support
+            node_support = structure%node_supports(i)
 
             if (node_support%Dx) then
-                Dx_index = (qtd_dof_node * (node_support%node - 1)) + 1
+                Dx_index = (structure%qtd_dof_node * (node_support%node - 1)) + 1
                 D_aux(Dx_index) = D_aux(Dx_index) - (node_support%Dx_value)
             end if
 
             if (node_support%Dy) then
-                Dy_index = (qtd_dof_node * (node_support%node - 1)) + 2
+                Dy_index = (structure%qtd_dof_node * (node_support%node - 1)) + 2
                 D_aux(Dy_index) = D_aux(Dy_index) - (node_support%Dy_value)
             end if
 
             if (node_support%Rz) then
-                Rz_index = (qtd_dof_node * (node_support%node - 1)) + 3
+                Rz_index = (structure%qtd_dof_node * (node_support%node - 1)) + 3
                 D_aux(Rz_index) = D_aux(Rz_index) - (node_support%Rz_value)
             end if
         end do
 
-        do i = 1, qtd_nodes_support
-            node_support = node_supports(i)
+        do i = 1, structure%qtd_nodes_support
+            node_support = structure%node_supports(i)
 
             if (node_support%Dx) then
-                Dx_index = (qtd_dof_node * (node_support%node - 1)) + 1
+                Dx_index = (structure%qtd_dof_node * (node_support%node - 1)) + 1
 
-                Rg(Dx_index) = Rg(Dx_index) - Fg(Dx_index)
+                structure%Rg(Dx_index) = structure%Rg(Dx_index) - structure%Fg(Dx_index)
 
-                do j = 1, global_dimension
-                    Rg(Dx_index) = Rg(Dx_index) + Kg(Dx_index, j) * D_aux(j)
+                do j = 1, structure%global_dimension
+                    structure%Rg(Dx_index) = structure%Rg(Dx_index) + structure%Kg(Dx_index, j) * D_aux(j)
                 end do
             end if
 
             if (node_support%Dy) then
-                Dy_index = (qtd_dof_node * (node_support%node - 1)) + 2
+                Dy_index = (structure%qtd_dof_node * (node_support%node - 1)) + 2
 
-                Rg(Dy_index) = Rg(Dy_index) - Fg(Dy_index)
+                structure%Rg(Dy_index) = structure%Rg(Dy_index) - structure%Fg(Dy_index)
 
-                do j = 1, global_dimension
-                    Rg(Dy_index) = Rg(Dy_index) + Kg(Dy_index, j) * D_aux(j)
+                do j = 1, structure%global_dimension
+                    structure%Rg(Dy_index) = structure%Rg(Dy_index) + structure%Kg(Dy_index, j) * D_aux(j)
                 end do
             end if
 
             if (node_support%Rz) then
-                Rz_index = (qtd_dof_node * (node_support%node - 1)) + 3
+                Rz_index = (structure%qtd_dof_node * (node_support%node - 1)) + 3
 
-                Rg(Rz_index) = Rg(Rz_index) - Fg(Rz_index)
+                structure%Rg(Rz_index) = structure%Rg(Rz_index) - structure%Fg(Rz_index)
 
-                do j = 1, global_dimension
-                    Rg(Rz_index) = Rg(Rz_index) + Kg(Rz_index, j) * D_aux(j)
+                do j = 1, structure%global_dimension
+                    structure%Rg(Rz_index) = structure%Rg(Rz_index) + structure%Kg(Rz_index, j) * D_aux(j)
                 end do
             end if
         end do

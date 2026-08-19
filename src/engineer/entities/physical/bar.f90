@@ -2,11 +2,8 @@ module EntityBar
     use iso_fortran_env, only: real64
 
     use EntityNode, only: Node
-
-    use StructureNodes, only: nodes
-    use StructureSections, only: sections
-    use StructureMaterials, only: materials
-    use StructureControls, only: element_dimension, theory
+    use EntityMaterial, only: Material
+    use EntitySection, only: Section
 
     use GQint, only: intGQ
     use LinearAlgebra, only: inv_special, LagPol, cross
@@ -42,10 +39,11 @@ module EntityBar
     real(real64), allocatable :: el_px(:)  ! Points of sample sections
 
 contains
-    function length(this)
+    function length(this, nodes)
         !! Calculate length of Bar
 
         class(Bar), intent(in) :: this
+        type(Node), intent(in) :: nodes(:)  !< Array of nodes
         real(real64) :: length !< The length of Bar
         real(real64) :: dx !< Delta x
         real(real64) :: dy !< Delta x
@@ -57,13 +55,18 @@ contains
     end function
 
 
-    function kl(this)
+    function kl(this, nodes, materials, sections, element_dimension, theory)
         !! Calculate the stiffness matrix of bar in local coordinates
 
         ! =========================================================================================
         ! Vars statement
         ! =========================================================================================
         class(Bar) :: this
+        type(Node), intent(in) :: nodes(:)  !< Array of nodes
+        type(Material), intent(in) :: materials(:)  !< Array of materials
+        type(Section), intent(in) :: sections(:)  !< Array of sections
+        integer, intent(in) :: element_dimension  !< Element dimension to local arrays
+        character(2), intent(in) :: theory  !< Theory used (Euler-Bernoulli or Timoshenko)
         real(real64), allocatable :: kl(:, :)  !> The stiffness matrix in local coordinates
 
         ! Aux *************************************************************************************
@@ -157,11 +160,13 @@ contains
         kl(4:, :3) = fFi
     end function
 
-    function R(this)
+    function R(this, nodes, element_dimension)
         ! =========================================================================================
         ! Vars statement
         ! =========================================================================================
         class(Bar) :: this
+        type(Node), intent(in) :: nodes(:)  !< Array of nodes
+        integer, intent(in) :: element_dimension  !< Element dimension to local arrays
         real(real64), allocatable :: R(:, :)
 
         ! Aux *************************************************************************************

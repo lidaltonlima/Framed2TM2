@@ -1,6 +1,8 @@
 module structural_model
     !! Module to StructuralModel
 
+    use iso_fortran_env, only: real64
+
     use EntityBar, only: Bar
     use EntityMaterial, only: Material
     use EntityNodeLoad, only: NodeLoad
@@ -20,6 +22,11 @@ module structural_model
         type(Node), allocatable :: nodes(:)  !< Array of nodes
         type(NodeSupport), allocatable :: node_supports(:) !< Array of node supports
         type(Section), allocatable :: sections(:)  !< Array of sections
+
+        real(real64), allocatable :: Kg(:, :)  !< Global stiffness matrix
+        real(real64), allocatable :: Dg(:)  !< Global displacements vector
+        real(real64), allocatable :: Fg(:)  !< Global loads vector
+        real(real64), allocatable :: Rg(:)  !< Global reactions vector
 
         integer :: global_dimension  !< Dimension of problem to global arrays
         integer :: element_dimension  ! Element dimension to local arrays

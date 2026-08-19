@@ -1,5 +1,5 @@
 module TextIO
-    use Structure
+    use structural_model, only: StructuralModel
     implicit none
     private
 
@@ -83,12 +83,15 @@ contains
     end function count_file_lines
 
 
-    subroutine get_structure_data
+    subroutine get_structure_data(structure)
         ! Get the data structure
 
         ! =========================================================================================
         ! Vars statement
         ! =========================================================================================
+        ! IO ******************************************************************
+        type(StructuralModel), intent(out) :: structure
+
         ! Controls ********************************************************************************
         integer :: file_unit  ! Unit to file
         integer :: read_stat  ! State of current read
@@ -111,12 +114,12 @@ contains
             if (read_stat == 0) then
                 select case (line_label)
                     case ('ndofn')
-                        qtd_dof_node = temp_int
+                        structure%qtd_dof_node = temp_int
                     case ('theory')
                         if (temp_int == 0) then
-                            theory = 'OB'
+                            structure%theory = 'OB'
                         else
-                            theory = 'TM'
+                            structure%theory = 'TM'
                         end if
                 end select
             else if (read_stat == -1) then
@@ -133,22 +136,22 @@ contains
         ! =========================================================================================
         ! MATERIALS
         ! =========================================================================================
-        qtd_materials = count_file_lines('materials') - 1
+        structure%qtd_materials = count_file_lines('materials') - 1
 
         ! Allocation ******************************************************************************
-        allocate(materials(qtd_materials))
+        allocate(structure%materials(structure%qtd_materials))
 
         ! Open ************************************************************************************
         call open_data_file('materials', file_unit)
 
         ! Read ************************************************************************************
         read(file_unit, *) ! titles line
-        do id = 1, qtd_materials
+        do id = 1, structure%qtd_materials
             read(file_unit, *) &
-                materials(id)%E, &
-                materials(id)%G, &
-                materials(id)%nu, &
-                materials(id)%rho
+                structure%materials(id)%E, &
+                structure%materials(id)%G, &
+                structure%materials(id)%nu, &
+                structure%materials(id)%rho
         end do
 
         ! Close ***********************************************************************************
@@ -157,30 +160,30 @@ contains
         ! =========================================================================================
         ! SECTIONS
         ! =========================================================================================
-        qtd_sections = count_file_lines('sections') - 1
+        structure%qtd_sections = count_file_lines('sections') - 1
 
         ! Allocation ******************************************************************************
-        allocate(sections(qtd_sections))
+        allocate(structure%sections(structure%qtd_sections))
 
         ! Open ************************************************************************************
         call open_data_file('sections', file_unit)
 
         ! Read ************************************************************************************
         read(file_unit, *) ! titles line
-        do id = 1, qtd_sections
+        do id = 1, structure%qtd_sections
             ! Internal allocation
-            read(file_unit, *) sections(id)%samples
-            allocate(sections(id)%A(sections(id)%samples))
-            allocate(sections(id)%As(sections(id)%samples))
-            allocate(sections(id)%Iz(sections(id)%samples))
+            read(file_unit, *) structure%sections(id)%samples
+            allocate(structure%sections(id)%A(structure%sections(id)%samples))
+            allocate(structure%sections(id)%As(structure%sections(id)%samples))
+            allocate(structure%sections(id)%Iz(structure%sections(id)%samples))
             backspace file_unit
 
             ! Read data
             read(file_unit, *) &
-                sections(id)%samples, &
-                sections(id)%A(:), &
-                sections(id)%As(:), &
-                sections(id)%Iz(:)
+                structure%sections(id)%samples, &
+                structure%sections(id)%A(:), &
+                structure%sections(id)%As(:), &
+                structure%sections(id)%Iz(:)
         end do
 
         ! Close ***********************************************************************************
@@ -189,20 +192,20 @@ contains
         ! =========================================================================================
         ! NODES
         ! =========================================================================================
-        qtd_nodes = count_file_lines('nodes') - 1
+        structure%qtd_nodes = count_file_lines('nodes') - 1
 
         ! Allocation ******************************************************************************
-        allocate(nodes(qtd_nodes))
+        allocate(structure%nodes(structure%qtd_nodes))
 
         ! Open ************************************************************************************
         call open_data_file('nodes', file_unit)
 
         ! Read ************************************************************************************
         read(file_unit, *) ! titles line
-        do id = 1, qtd_nodes
+        do id = 1, structure%qtd_nodes
             read(file_unit, *) &
-                nodes(id)%x, &
-                nodes(id)%y
+                structure%nodes(id)%x, &
+                structure%nodes(id)%y
         end do
 
         ! Close ***********************************************************************************
@@ -211,22 +214,22 @@ contains
         ! =========================================================================================
         ! BARS
         ! =========================================================================================
-        qtd_bars = count_file_lines('bars') - 1
+        structure%qtd_bars = count_file_lines('bars') - 1
 
         ! Allocation ******************************************************************************
-        allocate(bars(qtd_bars))
+        allocate(structure%bars(structure%qtd_bars))
 
         ! Open ************************************************************************************
         call open_data_file('bars', file_unit)
 
         ! Read ************************************************************************************
         read(file_unit, *) ! titles line
-        do id = 1, qtd_bars
+        do id = 1, structure%qtd_bars
             read(file_unit, *) &
-                bars(id)%material, &
-                bars(id)%section, &
-                bars(id)%start_node, &
-                bars(id)%end_node
+                structure%bars(id)%material, &
+                structure%bars(id)%section, &
+                structure%bars(id)%start_node, &
+                structure%bars(id)%end_node
         end do
 
         ! Close ***********************************************************************************
@@ -235,25 +238,25 @@ contains
         ! =========================================================================================
         ! Bound
         ! =========================================================================================
-        qtd_nodes_support = count_file_lines('nodes_supports') - 1
+        structure%qtd_nodes_support = count_file_lines('nodes_supports') - 1
 
         ! Allocation ******************************************************************************
-        allocate(node_supports(qtd_nodes_support))
+        allocate(structure%node_supports(structure%qtd_nodes_support))
 
         ! Open ************************************************************************************
         call open_data_file('nodes_supports', file_unit)
 
         ! Read ************************************************************************************
         read(file_unit, *) ! titles line
-        do id = 1, qtd_nodes_support
+        do id = 1, structure%qtd_nodes_support
             read(file_unit, *) &
-                node_supports(id)%node, &
-                node_supports(id)%Dx, &
-                node_supports(id)%Dy, &
-                node_supports(id)%Rz, &
-                node_supports(id)%Dx_value, &
-                node_supports(id)%Dy_value, &
-                node_supports(id)%Rz_value
+                structure%node_supports(id)%node, &
+                structure%node_supports(id)%Dx, &
+                structure%node_supports(id)%Dy, &
+                structure%node_supports(id)%Rz, &
+                structure%node_supports(id)%Dx_value, &
+                structure%node_supports(id)%Dy_value, &
+                structure%node_supports(id)%Rz_value
         end do
 
         ! Close ***********************************************************************************
@@ -262,22 +265,22 @@ contains
         ! =========================================================================================
         ! Loads
         ! =========================================================================================
-        qtd_node_loads = count_file_lines('node_loads') - 1
+        structure%qtd_node_loads = count_file_lines('node_loads') - 1
 
         ! Allocation ******************************************************************************
-        allocate(node_loads(qtd_node_loads))
+        allocate(structure%node_loads(structure%qtd_node_loads))
 
         ! Open ************************************************************************************
         call open_data_file('node_loads', file_unit)
 
         ! Read ************************************************************************************
         read(file_unit, *) ! titles line
-        do id = 1, qtd_node_loads
+        do id = 1, structure%qtd_node_loads
             read(file_unit, *) &
-                node_loads(id)%node, &
-                node_loads(id)%Fx, &
-                node_loads(id)%Fy, &
-                node_loads(id)%Mz
+                structure%node_loads(id)%node, &
+                structure%node_loads(id)%Fx, &
+                structure%node_loads(id)%Fy, &
+                structure%node_loads(id)%Mz
         end do
 
         ! Close ***********************************************************************************

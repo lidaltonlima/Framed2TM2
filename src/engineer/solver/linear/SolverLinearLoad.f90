@@ -5,12 +5,7 @@ module SolverLinearLoad
     use EntityNodeLoad, only: NodeLoad
     use EntityNodeSupport, only: NodeSupport
 
-    use StructureNodeLoads, only: node_loads
-    use StructureNodeSupports, only: node_supports
-
-    use Structure, only: &
-        Fg, Kg, &
-        global_dimension, qtd_node_loads, qtd_dof_node, qtd_nodes_support
+    use structural_model, only: StructuralModel
 
     implicit none
     private
@@ -18,10 +13,13 @@ module SolverLinearLoad
     public :: calc_Fg
 
 contains
-    subroutine calc_Fg
+    subroutine calc_Fg(structure)
         ! =========================================================================================
         ! Vars statement
         ! =========================================================================================
+        ! I/O *************************************************************************************
+        type(StructuralModel), intent(inout) :: structure  !< The structural model
+
         ! Aux *************************************************************************************
         integer :: i ! indices
 
@@ -41,41 +39,41 @@ contains
         ! Initialization
         ! =========================================================================================
         ! Allocation
-        allocate(Dp(global_dimension))
+        allocate(Dp(structure%global_dimension))
 
-        Fg = 0d0
-        do i = 1, qtd_node_loads
-            node_load = node_loads(i)
+        structure%Fg = 0d0
+        do i = 1, structure%qtd_node_loads
+            node_load = structure%node_loads(i)
 
-            Fx_index = (qtd_dof_node * (node_load%node - 1)) + 1
-            Fy_index = (qtd_dof_node * (node_load%node - 1)) + 2
-            Mz_index = (qtd_dof_node * (node_load%node - 1)) + 3
+            Fx_index = (structure%qtd_dof_node * (node_load%node - 1)) + 1
+            Fy_index = (structure%qtd_dof_node * (node_load%node - 1)) + 2
+            Mz_index = (structure%qtd_dof_node * (node_load%node - 1)) + 3
 
-            Fg(Fx_index) = Fg(Fx_index) + node_load%Fx
-            Fg(Fy_index) = Fg(Fy_index) + node_load%Fy
-            Fg(Mz_index) = Fg(Mz_index) + node_load%Mz
+            structure%Fg(Fx_index) = structure%Fg(Fx_index) + node_load%Fx
+            structure%Fg(Fy_index) = structure%Fg(Fy_index) + node_load%Fy
+            structure%Fg(Mz_index) = structure%Fg(Mz_index) + node_load%Mz
         end do
 
         Dp = 0d0
-        do i = 1, qtd_nodes_support
-            node_support = node_supports(i)
+        do i = 1, structure%qtd_nodes_support
+            node_support = structure%node_supports(i)
 
             if (node_support%Dx) then
-                Dx_index = (qtd_dof_node * (node_support%node - 1)) + 1
+                Dx_index = (structure%qtd_dof_node * (node_support%node - 1)) + 1
                 Dp(Dx_index) = node_support%Dx_value
             end if
 
             if (node_support%Dy) then
-                Dy_index = (qtd_dof_node * (node_support%node - 1)) + 2
+                Dy_index = (structure%qtd_dof_node * (node_support%node - 1)) + 2
                 Dp(Dy_index) = node_support%Dy_value
             end if
 
             if (node_support%Rz) then
-                Rz_index = (qtd_dof_node * (node_support%node - 1)) + 3
+                Rz_index = (structure%qtd_dof_node * (node_support%node - 1)) + 3
                 Dp(Rz_index) = node_support%Rz_value
             end if
         end do
 
-        Fg = Fg - matmul(Kg, Dp)
+        structure%Fg = structure%Fg - matmul(structure%Kg, Dp)
     end subroutine calc_Fg
 end module
