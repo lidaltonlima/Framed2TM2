@@ -101,18 +101,20 @@
   "material-icon-theme.folders.associations": {
     "structure": "graphql",
     "engineer": "nuxt",
-    "solver": "core",
+    "analysis": "core",
     "dynamic": "generator",
-    "linear": "serverless",
+    "static": "serverless",
     "mesh": "app",
     "entities": "delta",
     "loads": "download",
     "supports": "link",
     "physical": "container",
     "sizing": "tasks",
-    "JsonFortran": "json",
-    "Lapack": "functions",
+    "json_fortran": "json",
+    "lapack": "functions",
     "materials": "shader",
-    "sections": "cue"
+    "sections": "cue",
+    "element": "container",
+    "elements": "container"
   }
 }
