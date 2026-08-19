@@ -22,12 +22,17 @@ program main
     call calc_Kg
     call calc_Fg
     call calc_Dg
+    call calc_Rg
 
 
     block
         integer :: i
         do i = 1, global_dimension
-            write(*, '(*(ES15.4))') Dg(i)
+            if (abs(Rg(i)) < 1e-10) then
+                write(*, '(*(ES15.4))') 0.0
+            else
+                write(*, '(*(ES15.4))') Rg(i)
+            end if
         end do
     end block
 
