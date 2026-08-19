@@ -5,20 +5,22 @@ module SolverLinearReactions
 
     use EntityNodeSupport, only: NodeSupport
 
+    use static_analysis_results, only: StaticAnalysisResults
     use structural_model, only: StructuralModel
 
     implicit none
     private
 
-    public :: calc_Rg
+    public :: solve_reactions
 
 contains
-    subroutine calc_Rg(structure)
+    subroutine solve_reactions(structure, results)
         ! =========================================================================================
         ! Vars Statements
         ! =========================================================================================
         ! I/O *************************************************************************************
-        type(StructuralModel), intent(inout) :: structure  !< The structural model
+        type(StructuralModel), intent(in) :: structure  !< The structural model
+        type(StaticAnalysisResults), intent(inout) :: results  !< Static analysis results
 
         ! Control *********************************************************************************
         type(NodeSupport) :: node_support
@@ -33,7 +35,7 @@ contains
         ! =========================================================================================
         ! Calculation
         ! =========================================================================================
-        D_aux = structure%Dg
+        D_aux = results%displacements
         do i = 1, structure%qtd_nodes_support
             node_support = structure%node_supports(i)
 
@@ -59,34 +61,34 @@ contains
             if (node_support%Dx) then
                 Dx_index = (structure%qtd_dof_node * (node_support%node - 1)) + 1
 
-                structure%Rg(Dx_index) = structure%Rg(Dx_index) - structure%Fg(Dx_index)
+                results%reactions(Dx_index) = results%reactions(Dx_index) - results%load_vector(Dx_index)
 
                 do j = 1, structure%global_dimension
-                    structure%Rg(Dx_index) = structure%Rg(Dx_index) + structure%Kg(Dx_index, j) * D_aux(j)
+                    results%reactions(Dx_index) = results%reactions(Dx_index) + results%stiffness_matrix(Dx_index, j) * D_aux(j)
                 end do
             end if
 
             if (node_support%Dy) then
                 Dy_index = (structure%qtd_dof_node * (node_support%node - 1)) + 2
 
-                structure%Rg(Dy_index) = structure%Rg(Dy_index) - structure%Fg(Dy_index)
+                results%reactions(Dy_index) = results%reactions(Dy_index) - results%load_vector(Dy_index)
 
                 do j = 1, structure%global_dimension
-                    structure%Rg(Dy_index) = structure%Rg(Dy_index) + structure%Kg(Dy_index, j) * D_aux(j)
+                    results%reactions(Dy_index) = results%reactions(Dy_index) + results%stiffness_matrix(Dy_index, j) * D_aux(j)
                 end do
             end if
 
             if (node_support%Rz) then
                 Rz_index = (structure%qtd_dof_node * (node_support%node - 1)) + 3
 
-                structure%Rg(Rz_index) = structure%Rg(Rz_index) - structure%Fg(Rz_index)
+                results%reactions(Rz_index) = results%reactions(Rz_index) - results%load_vector(Rz_index)
 
                 do j = 1, structure%global_dimension
-                    structure%Rg(Rz_index) = structure%Rg(Rz_index) + structure%Kg(Rz_index, j) * D_aux(j)
+                    results%reactions(Rz_index) = results%reactions(Rz_index) + results%stiffness_matrix(Rz_index, j) * D_aux(j)
                 end do
             end if
         end do
-    end subroutine calc_Rg
+    end subroutine solve_reactions
 
     ! subroutine calc_ERl
     !     ! =========================================================================================

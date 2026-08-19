@@ -3,12 +3,13 @@ module SolverLinearStiffness
 
     use iso_fortran_env, only: real64
 
+    use static_analysis_results, only: StaticAnalysisResults
     use structural_model, only: StructuralModel
 
     implicit none
     private
 
-    public :: calc_Kg
+    public :: solve_stiffness_matrix
 
 contains
     subroutine add_k(structure, K, id)
@@ -57,24 +58,25 @@ contains
     end subroutine add_k
 
 
-    subroutine calc_Kg(structure)
+    subroutine solve_stiffness_matrix(structure, results)
         !! Calculate the global stiffness matrix
 
         ! =========================================================================================
         ! Vars statement
         ! =========================================================================================
         ! I/O *************************************************************************************
-        type(StructuralModel), intent(inout) :: structure  !< The structural model
+        type(StructuralModel), intent(in) :: structure  !< The structural model
+        type(StaticAnalysisResults), intent(inout) :: results  !< Static analysis results
 
         ! Aux *************************************************************************************
         integer :: id  ! Id of bar
 
-        allocate(structure%Kg(structure%global_dimension, structure%global_dimension))
+        allocate(results%stiffness_matrix(structure%global_dimension, structure%global_dimension))
 
-        structure%Kg = 0d0
+        results%stiffness_matrix = 0d0
 
         do id = 1, structure%qtd_bars
-            call add_k(structure, structure%Kg, id)
+            call add_k(structure, results%stiffness_matrix, id)
         end do
     end subroutine
 end module

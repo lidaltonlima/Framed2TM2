@@ -5,20 +5,22 @@ module SolverLinearLoad
     use EntityNodeLoad, only: NodeLoad
     use EntityNodeSupport, only: NodeSupport
 
+    use static_analysis_results, only: StaticAnalysisResults
     use structural_model, only: StructuralModel
 
     implicit none
     private
 
-    public :: calc_Fg
+    public :: solve_load_vector
 
 contains
-    subroutine calc_Fg(structure)
+    subroutine solve_load_vector(structure, results)
         ! =========================================================================================
         ! Vars statement
         ! =========================================================================================
         ! I/O *************************************************************************************
-        type(StructuralModel), intent(inout) :: structure  !< The structural model
+        type(StructuralModel), intent(in) :: structure  !< The structural model
+        type(StaticAnalysisResults), intent(inout) :: results  !< Static analysis results
 
         ! Aux *************************************************************************************
         integer :: i ! indices
@@ -41,7 +43,7 @@ contains
         ! Allocation
         allocate(Dp(structure%global_dimension))
 
-        structure%Fg = 0d0
+        results%load_vector = 0d0
         do i = 1, structure%qtd_node_loads
             node_load = structure%node_loads(i)
 
@@ -49,9 +51,9 @@ contains
             Fy_index = (structure%qtd_dof_node * (node_load%node - 1)) + 2
             Mz_index = (structure%qtd_dof_node * (node_load%node - 1)) + 3
 
-            structure%Fg(Fx_index) = structure%Fg(Fx_index) + node_load%Fx
-            structure%Fg(Fy_index) = structure%Fg(Fy_index) + node_load%Fy
-            structure%Fg(Mz_index) = structure%Fg(Mz_index) + node_load%Mz
+            results%load_vector(Fx_index) = results%load_vector(Fx_index) + node_load%Fx
+            results%load_vector(Fy_index) = results%load_vector(Fy_index) + node_load%Fy
+            results%load_vector(Mz_index) = results%load_vector(Mz_index) + node_load%Mz
         end do
 
         Dp = 0d0
@@ -74,6 +76,6 @@ contains
             end if
         end do
 
-        structure%Fg = structure%Fg - matmul(structure%Kg, Dp)
-    end subroutine calc_Fg
+        results%load_vector = results%load_vector - matmul(results%stiffness_matrix, Dp)
+    end subroutine solve_load_vector
 end module

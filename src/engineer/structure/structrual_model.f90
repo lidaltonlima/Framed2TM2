@@ -23,11 +23,6 @@ module structural_model
         type(NodeSupport), allocatable :: node_supports(:) !< Array of node supports
         type(Section), allocatable :: sections(:)  !< Array of sections
 
-        real(real64), allocatable :: Kg(:, :)  !< Global stiffness matrix
-        real(real64), allocatable :: Dg(:)  !< Global displacements vector
-        real(real64), allocatable :: Fg(:)  !< Global loads vector
-        real(real64), allocatable :: Rg(:)  !< Global reactions vector
-
         integer :: global_dimension  !< Dimension of problem to global arrays
         integer :: element_dimension  ! Element dimension to local arrays
         integer :: qtd_nodes  !< Quantity of nodes
@@ -39,5 +34,16 @@ module structural_model
         integer :: qtd_sections  !< Quantity of sections
         integer :: qtd_node_loads  !< Quantity of nodes with point load
         character(2) :: theory !< Theory used (Euler-Bernoulli or Timoshenko
+    contains
+        procedure :: initialize_vars
     end type
+
+contains
+    subroutine initialize_vars(this)
+        class(StructuralModel) :: this
+
+        ! Calculate the dimension of arrays
+        this%global_dimension = this%qtd_nodes * this%qtd_dof_node
+        this%element_dimension = 2 * this%qtd_dof_node
+    end subroutine
 end module
