@@ -1,4 +1,4 @@
-module TypeConversion
+module type_conversion
     use iso_fortran_env, only: real64
     implicit none
 
@@ -52,4 +52,4 @@ contains
         text = trim(buffer)
     end function real2char
 
-end module TypeConversion
+ end module type_conversion

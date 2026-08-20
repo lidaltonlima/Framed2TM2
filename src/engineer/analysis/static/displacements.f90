@@ -3,7 +3,7 @@ module solver_linear_displacements
 
     use iso_fortran_env, only: real64
 
-    use EntityNodeSupport, only: NodeSupport
+    use entity_node_support, only: NodeSupport
     use solver_linear_supports, only: apply_supports
     use systems, only: solve_symmetric_positive_definite_system
     use static_analysis_results, only: StaticAnalysisResults
@@ -60,5 +60,5 @@ contains
                 results%displacements(Rz_index) = node_support%Rz_value
             end if
         end do
-    end subroutine solve_displacements
+    end subroutine
 end module

@@ -3,7 +3,7 @@ module solver_linear_supports
 
     use iso_fortran_env, only: real64
 
-    use EntityNodeSupport, only: NodeSupport
+    use entity_node_support, only: NodeSupport
     use structural_model, only: StructuralModel
 
     implicit none
@@ -50,5 +50,5 @@ contains
                 F(Rz_index) = 0d0
             end if
         end do
-    end subroutine apply_supports
+    end subroutine
 end module

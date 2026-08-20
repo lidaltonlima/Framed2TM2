@@ -1,8 +1,8 @@
-module TextIO
+module text_io
     use iso_fortran_env, only: real64
     use structural_model, only: StructuralModel
     use static_analysis_results, only: StaticAnalysisResults
-    use Precision, only: disp_tolerance, force_tolerance
+    use precision, only: disp_tolerance, force_tolerance
     implicit none
     private
 

@@ -1,4 +1,4 @@
-module DebugTime
+module debug_time
     implicit none
     save
 
@@ -51,4 +51,4 @@ contains
         time_res = real(count_f - count_i) / real(count_r)
     end subroutine time_count_get
 
-end module DebugTime
+end module debug_time

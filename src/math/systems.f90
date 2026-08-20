@@ -22,5 +22,5 @@ contains
         call dposv('U', n, 1, K, n, X, n, info)
 
         if (info /= 0) error stop 'DPOSV - solve_symmetric_positive_definite_system: solution system.'
-    end subroutine solve_symmetric_positive_definite_system
+    end subroutine
 end module

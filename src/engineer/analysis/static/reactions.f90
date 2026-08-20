@@ -3,7 +3,7 @@ module solver_linear_reactions
 
     use iso_fortran_env, only: real64
 
-    use EntityNodeSupport, only: NodeSupport
+    use entity_node_support, only: NodeSupport
 
     use static_analysis_results, only: StaticAnalysisResults
     use structural_model, only: StructuralModel

@@ -3,12 +3,12 @@ module structural_model
 
     use iso_fortran_env, only: real64
 
-    use EntityBar, only: Bar
-    use EntityMaterial, only: Material
-    use EntityNodeLoad, only: NodeLoad
-    use EntityNode, only: Node
-    use EntityNodeSupport, only: NodeSupport
-    use EntitySection, only: Section
+    use entity_bar, only: Bar
+    use entity_material, only: Material
+    use entity_node_load, only: NodeLoad
+    use entity_node, only: Node
+    use entity_node_support, only: NodeSupport
+    use entity_section, only: Section
 
     implicit none
     private

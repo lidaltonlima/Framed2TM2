@@ -1,4 +1,4 @@
-module LinearAlgebra
+module linear_algebra
     use iso_fortran_env, only: real64
     implicit none
     private
@@ -22,7 +22,7 @@ contains
         c(1) = (a(2) * b(3)) - (a(3) * b(2))
         c(2) = (a(3) * b(1)) - (a(1) * b(3))
         c(3) = (a(1) * b(2)) - (a(2) * b(1))
-    end function cross
+    end function
 
     pure real(real64) function det_2by2(mat)
         ! Calculates the determinant of 2x2 matrix
@@ -82,7 +82,7 @@ contains
         ! Inverse calculation (Lapack)
         call dgetri(dim, mat_inv, dim, ipiv, work, dim, info)
         if (info /= 0) error stop 'DGETRI failed while inverting matrix in inv'
-    end function inv
+    end function
 
     pure function inv_special(mat)
         ! Calculates the inverse of special matrix (matrix A)
@@ -171,5 +171,5 @@ contains
             y = y + py(i) * lag
             lag = 1
         end do
-    end function LagPol
-end module LinearAlgebra
+    end function
+end module

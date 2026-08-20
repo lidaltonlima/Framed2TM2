@@ -1,4 +1,4 @@
-module Elementary
+module elementary
     implicit none
 
 contains

@@ -1,4 +1,4 @@
-module GQInt
+module gq_int
     use iso_fortran_env, only: real64
     ! (ENG-NA-001)
     ! Calculate numerical integral use Gauss Quadrature
@@ -49,7 +49,7 @@ contains
         do i = 1, n
             int = int + (f(new_x(a, b, t(i))) * c(i)) * ((b - a) / 2)
         end do
-    end function intGQ
+    end function
 
     pure real(real64) function new_x(a, b, t) result(x)
         ! Calculate the new value of x for new limits of integration
@@ -65,7 +65,7 @@ contains
         ! Calculation
         ! =========================================================================================
         x = ((b - a) * t + (b + a)) / 2
-    end function new_x
+    end function
 
     pure subroutine getTC(n, t, c)
         ! Get roots (t) and coefficients (c) for n points
@@ -555,5 +555,5 @@ contains
             c( 19) =    0.040601429800386
             c( 20) =    0.017614007139152
         endif
-    end subroutine getTC
-end module GQInt
+    end subroutine
+end module gq_int

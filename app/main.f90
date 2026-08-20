@@ -1,5 +1,5 @@
 program main
-    use TextIO
+    use text_io
     use structural_model, only: StructuralModel
 
     use static_analysis, only: &

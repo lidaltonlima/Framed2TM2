@@ -53,7 +53,7 @@ contains
         K(si:ei, sj:ej) = K(si:ei, sj:ej) + EKg(:3, 4:)  ! k_ij
         K(sj:ej, si:ei) = K(sj:ej, si:ei) + EKg(4:, :3)  ! k_ji
         K(sj:ej, sj:ej) = K(sj:ej, sj:ej) + EKg(4:, 4:)  ! k_jj
-    end subroutine add_k
+    end subroutine
 
 
     subroutine assemble_stiffness_matrix(structure, results)

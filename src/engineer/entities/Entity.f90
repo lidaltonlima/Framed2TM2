@@ -1,4 +1,4 @@
-module EntityEntity
+module entity_entity
     !! Superclass to entities
     implicit none
     private

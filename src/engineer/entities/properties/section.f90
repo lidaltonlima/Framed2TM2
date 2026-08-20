@@ -1,6 +1,6 @@
-module EntitySection
+module entity_section
     use iso_fortran_env, only: real64
-    use EntityEntity, only: Entity
+    use entity_entity, only: Entity
     implicit none
     private
 

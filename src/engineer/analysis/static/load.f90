@@ -2,8 +2,8 @@ module solver_linear_load
     !! Functions and subroutine for structure load
     use iso_fortran_env, only: real64
 
-    use EntityNodeLoad, only: NodeLoad
-    use EntityNodeSupport, only: NodeSupport
+    use entity_node_load, only: NodeLoad
+    use entity_node_support, only: NodeSupport
 
     use static_analysis_results, only: StaticAnalysisResults
     use structural_model, only: StructuralModel
@@ -81,5 +81,5 @@ contains
         end do
 
         results%load_vector = results%load_vector - matmul(results%stiffness_matrix, Dp)
-    end subroutine assemble_load_vector
+    end subroutine
 end module

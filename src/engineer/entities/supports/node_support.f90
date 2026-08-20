@@ -1,7 +1,7 @@
-module EntityNodeSupport
+module entity_node_support
     use iso_fortran_env, only: real64
-    use EntityNode, only: Node
-    use EntityEntity, only: Entity
+    use entity_node, only: Node
+    use entity_entity, only: Entity
 
     implicit none
     private
