@@ -22,7 +22,9 @@ module EntityBar
     contains
         procedure :: length
         procedure :: stiffness_matrix_local_system
-        procedure :: R
+        procedure :: rotation_matrix
+        procedure :: reactions
+        procedure :: efforts
     end type
 
     ! =============================================================================================
@@ -162,7 +164,8 @@ contains
         kl(4:, :3) = fFi
     end function
 
-    function R(this, nodes, element_dimension)
+
+    function rotation_matrix(this, nodes, element_dimension) result(R)
         ! =========================================================================================
         ! Vars statement
         ! =========================================================================================
@@ -219,6 +222,96 @@ contains
 
         R(4:, 4:) = R(:3, :3)
 
+    end function
+
+
+    function reactions( &
+        this, nodes, materials, sections, element_dimension, &
+        dof_per_node, theory, global_displacements &
+        ) result(ERl)
+        !! Calculate the reactions of the bar in its local system from the global displacements
+
+        ! =========================================================================================
+        ! Vars statement
+        ! =========================================================================================
+        class(Bar) :: this
+        type(Node), intent(in) :: nodes(:)  !< Array of nodes
+        type(Material), intent(in) :: materials(:)  !< Array of materials
+        type(Section), intent(in) :: sections(:)  !< Array of sections
+        integer, intent(in) :: element_dimension  !< Element dimension to local arrays
+        integer, intent(in) :: dof_per_node  !< Degrees of freedom per node
+        character(2), intent(in) :: theory  !< Theory used (Euler-Bernoulli or Timoshenko)
+        real(real64), intent(in) :: global_displacements(:)  !< Displacements in global system
+        real(real64), allocatable :: ERl(:)  !> The reactions of bar in local system
+
+        ! Aux *************************************************************************************
+        real(real64), allocatable :: R(:, :)  ! Rotation matrix of bar
+        real(real64), allocatable :: kl(:, :)  ! Stiffness matrix of bar in local system
+        real(real64) :: EDg(element_dimension)  ! Element displacement in global system
+        real(real64) :: EDl(element_dimension)  ! Element displacement in local system
+        integer :: si, ei  ! start and end index in start node
+        integer :: sf, ef  ! start and end index in end node
+
+        ! =========================================================================================
+        ! Calculation
+        ! =========================================================================================
+        si = (dof_per_node * (this%start_node - 1)) + 1
+        ei = si + dof_per_node - 1
+
+        sf = (dof_per_node * (this%end_node - 1)) + 1
+        ef = sf + dof_per_node - 1
+
+        EDg(:dof_per_node) = global_displacements(si:ei)
+        EDg(dof_per_node+1:) = global_displacements(sf:ef)
+
+        R = this%rotation_matrix(nodes, element_dimension)
+        kl = this%stiffness_matrix_local_system(nodes, materials, sections, element_dimension, theory)
+
+        EDl = matmul(R, EDg)
+
+        allocate(ERl(element_dimension))
+        ERl = matmul(kl, EDl)
+    end function
+
+
+    function efforts( &
+        this, nodes, materials, sections, element_dimension, &
+        dof_per_node, theory, global_displacements &
+        ) result(EEl)
+        !! Calculate the efforts of the bar from its reactions in local system
+
+        ! =========================================================================================
+        ! Vars statement
+        ! =========================================================================================
+        class(Bar) :: this
+        type(Node), intent(in) :: nodes(:)  !< Array of nodes
+        type(Material), intent(in) :: materials(:)  !< Array of materials
+        type(Section), intent(in) :: sections(:)  !< Array of sections
+        integer, intent(in) :: element_dimension  !< Element dimension to local arrays
+        integer, intent(in) :: dof_per_node  !< Degrees of freedom per node
+        character(2), intent(in) :: theory  !< Theory used (Euler-Bernoulli or Timoshenko)
+        real(real64), intent(in) :: global_displacements(:)  !< Displacements in global system
+        real(real64), allocatable :: EEl(:)  !> The efforts of bar
+
+        ! Aux *************************************************************************************
+        real(real64), allocatable :: ERl(:)  ! Reactions of bar in local system
+        real(real64) :: bar_length  ! Length of bar
+
+        ! =========================================================================================
+        ! Calculation
+        ! =========================================================================================
+        ERl = this%reactions( &
+            nodes, materials, sections, element_dimension, dof_per_node, theory, global_displacements)
+        bar_length = this%length(nodes)
+
+        allocate(EEl(element_dimension))
+        ! N and V are constant along the bar; M varies linearly without interior loads
+        EEl(1) = -ERl(1)
+        EEl(2) = -ERl(2)
+        EEl(3) = -ERl(3)
+        EEl(4) = -ERl(1)
+        EEl(5) = -ERl(2)
+        EEl(6) = -ERl(3) + ERl(2) * bar_length
     end function
 
 

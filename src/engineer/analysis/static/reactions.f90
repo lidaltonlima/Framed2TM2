@@ -89,32 +89,4 @@ contains
             end if
         end do
     end subroutine solve_reactions
-
-    ! subroutine calc_ERl
-    !     ! =========================================================================================
-    !     ! Vars Statements
-    !     ! =========================================================================================on of matrices and vectors
-
-    !     ! Aux
-    !     integer :: i
-    !     integer :: si, ei  ! start and end index in initial node
-    !     integer :: sf, ef  ! start and end index in end node
-    !     real(real64) :: EDg(E_dim)  ! element displacement in global system
-    !     real(real64) :: EDl(E_dim)  ! element displacement in local system
-
-
-    !     do i = 1, nel
-    !         si = (ndofn * (bars(i, 3) - 1)) + 1
-    !         ei = si + ndofn - 1
-
-    !         sf = (ndofn * (bars(i, 4) - 1)) + 1
-    !         ef = sf + ndofn - 1
-
-    !         EDg(:ndofn) = Dg(si:ei)
-    !         EDg(ndofn+1:) = Dg(sf:ef)
-
-    !         EDl = matmul(R(i), EDg)
-    !         ERl(i, :) = matmul(EKl(i), EDl)
-    !     end do
-    ! end subroutine calc_ERl
 end module

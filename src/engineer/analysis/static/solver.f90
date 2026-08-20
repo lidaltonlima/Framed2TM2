@@ -33,16 +33,5 @@ contains
         call assemble_stiffness_matrix(structure, results)
         call assemble_load_vector(structure, results)
         call solve_reactions(structure, results)
-
-        block
-            integer :: i
-            do i = 1, structure%global_dimension
-                if (abs(results%reactions(i)) < 1e-10) then
-                    write(*, '(*(ES15.4))') 0.0
-                else
-                    write(*, '(*(ES15.4))') results%reactions(i)
-                end if
-            end do
-        end block
     end subroutine
 end module

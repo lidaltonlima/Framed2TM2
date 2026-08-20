@@ -35,7 +35,7 @@ contains
         ! =========================================================================================
         ! Calculates
         ! =========================================================================================
-        R = structure%bars(id)%R(structure%nodes, structure%bar_dimension)
+        R = structure%bars(id)%rotation_matrix(structure%nodes, structure%bar_dimension)
         EKg = structure%bars(id)%stiffness_matrix_local_system( &
             structure%nodes, structure%materials, structure%sections, &
             structure%bar_dimension, structure%theory)
