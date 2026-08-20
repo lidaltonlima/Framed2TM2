@@ -50,6 +50,42 @@ contains
         end if
     end subroutine open_data_file
 
+    subroutine save_data_file(file_name,  file_unit)
+        ! Save data in file
+
+        ! =========================================================================================
+        ! Vars statement
+        ! =========================================================================================
+        ! I/O
+        character(*), intent(in) :: file_name  ! File name
+        integer, intent(out) :: file_unit  ! Unit to file
+        character(11), parameter :: data_folder = './data/res/'  ! Data file location
+        character(4), parameter :: file_extension = '.dat'  ! Data file extension
+        integer :: file_stat  ! State of file
+        character(30) :: file_error  ! Message to file error
+        character(30) :: file_path  ! Complete path to file
+
+        ! =========================================================================================
+        ! Process
+        ! =========================================================================================
+        ! Open ************************************************************************************
+        file_path = data_folder // trim(file_name) // file_extension
+        open(newUnit=file_unit, &
+            file=file_path, &
+            status='replace', &
+            action='write', &
+            ioStat=file_stat, &
+            ioMsg=file_error)
+
+
+        ! Error ***********************************************************************************
+        if ( file_stat /= 0) then
+            print *, 'State: ', file_stat
+            print *, 'MSG: ', file_error
+            error stop 'File open'
+        end if
+    end subroutine save_data_file
+
 
     function count_file_lines(file_name) result(line_count)
         !! Count how many non-blank (written) lines a data file has
@@ -323,8 +359,6 @@ contains
 
         ! File ************************************************************************************
         integer :: file_unit  ! Unit to file
-        integer :: file_stat  ! State of file
-        character(:), allocatable :: file_error  ! Message to file error
 
         ! Aux *************************************************************************************
         character(10) :: int2str1
@@ -342,18 +376,7 @@ contains
             samples = 0
         end if
 
-        open(newunit=file_unit, &
-            file='./data/res/results.dat', &
-            status='replace', &
-            action='write', &
-            iostat=file_stat, &
-            iomsg=file_error)
-
-        if (file_stat /= 0) then
-            write(*, *) 'State: ', file_stat
-            write(*, *) 'MSG: ', file_error
-            error stop 'File open'
-        end if
+        call save_data_file('results', file_unit)
 
         ! =========================================================================================
         ! Processes

@@ -8,6 +8,7 @@ module static_analysis_results
 
     type, public :: StaticAnalysisResults
         !! Class that have all global results
+
         real(real64), allocatable :: stiffness_matrix(:, :)  !< Stiffness matrix
         real(real64), allocatable :: displacements(:)  !< Displacements vector
         real(real64), allocatable :: load_vector(:)  !< Loads vector

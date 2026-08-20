@@ -1,5 +1,6 @@
 module solver_linear_load
     !! Functions and subroutine for structure load
+
     use iso_fortran_env, only: real64
 
     use entity_node_load, only: NodeLoad
