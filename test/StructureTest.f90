@@ -80,6 +80,8 @@ program StructureTest
         write(*, '(1A)', advance='no') '='
     end do
 
+    write(*, *)
+
 contains
     subroutine show_details
         if (line_t /= line_r) then
