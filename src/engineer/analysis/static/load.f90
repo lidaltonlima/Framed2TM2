@@ -51,9 +51,9 @@ contains
         do i = 1, structure%qtd_node_loads
             node_load = structure%node_loads(i)
 
-            Fx_index = (structure%dof_per_node * (node_load%node - 1)) + 1
-            Fy_index = (structure%dof_per_node * (node_load%node - 1)) + 2
-            Mz_index = (structure%dof_per_node * (node_load%node - 1)) + 3
+            Fx_index = (structure%dof_per_node * (node_load%node%id - 1)) + 1
+            Fy_index = (structure%dof_per_node * (node_load%node%id - 1)) + 2
+            Mz_index = (structure%dof_per_node * (node_load%node%id - 1)) + 3
 
             results%load_vector(Fx_index) = results%load_vector(Fx_index) + node_load%Fx
             results%load_vector(Fy_index) = results%load_vector(Fy_index) + node_load%Fy
@@ -65,17 +65,17 @@ contains
             node_support = structure%node_supports(i)
 
             if (node_support%Dx) then
-                Dx_index = (structure%dof_per_node * (node_support%node - 1)) + 1
+                Dx_index = (structure%dof_per_node * (node_support%node%id - 1)) + 1
                 Dp(Dx_index) = node_support%Dx_value
             end if
 
             if (node_support%Dy) then
-                Dy_index = (structure%dof_per_node * (node_support%node - 1)) + 2
+                Dy_index = (structure%dof_per_node * (node_support%node%id - 1)) + 2
                 Dp(Dy_index) = node_support%Dy_value
             end if
 
             if (node_support%Rz) then
-                Rz_index = (structure%dof_per_node * (node_support%node - 1)) + 3
+                Rz_index = (structure%dof_per_node * (node_support%node%id - 1)) + 3
                 Dp(Rz_index) = node_support%Rz_value
             end if
         end do

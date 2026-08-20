@@ -1,9 +1,10 @@
 module EntityNode
     use iso_fortran_env, only: real64
+    use EntityEntity, only: Entity
     implicit none
     private
 
-    type, public :: Node
+    type, public, extends(Entity) :: Node
         !! The node of structure, where the entity connect.
 
         real(real64) :: x  !< Coordinate **x**

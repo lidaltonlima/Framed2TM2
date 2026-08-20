@@ -4,6 +4,7 @@ module EntityBar
     use EntityNode, only: Node
     use EntityMaterial, only: Material
     use EntitySection, only: Section
+    use EntityEntity, only: Entity
 
     use GQint, only: intGQ
     use LinearAlgebra, only: inv_special, LagPol, cross
@@ -11,20 +12,20 @@ module EntityBar
     implicit none
     private
 
-    type, public :: Bar
+    type, public, extends(Entity) :: Bar
         !! The entity Bar
 
-        integer :: material  !< Position of Material
-        integer :: section  !< Position of Section
-        integer :: start_node  !< Position of start node
-        integer :: end_node  !< Position of end node
+        type(Material), pointer :: material => null()  !< Material of bar
+        type(Section), pointer :: section => null()  !< Section of bar
+        type(Node), pointer :: start_node => null()  !< Start node of bar
+        type(Node), pointer :: end_node => null()  !< End node of bar
 
     contains
         procedure :: length
         procedure :: stiffness_matrix_local_system
         procedure :: rotation_matrix
         procedure :: reactions
-        procedure :: efforts
+        procedure :: forces
     end type
 
     ! =============================================================================================
@@ -41,34 +42,28 @@ module EntityBar
     real(real64), allocatable :: el_px(:)  ! Points of sample sections
 
 contains
-    function length(this, nodes)
+    function length(this)
         !! Calculate length of Bar
 
         class(Bar), intent(in) :: this
-        type(Node), intent(in) :: nodes(:)  !< Array of nodes
         real(real64) :: length !< The length of Bar
         real(real64) :: dx !< Delta x
         real(real64) :: dy !< Delta x
 
-        dx = nodes(this%end_node)%x - nodes(this%start_node)%x
-        dy = nodes(this%end_node)%y - nodes(this%start_node)%y
+        dx = this%end_node%x - this%start_node%x
+        dy = this%end_node%y - this%start_node%y
 
         length = sqrt(dx**2 + dy**2)
     end function
 
 
-    function stiffness_matrix_local_system( &
-        this, nodes, materials, sections, element_dimension, theory &
-        ) result(kl)
+    function stiffness_matrix_local_system(this, element_dimension, theory) result(kl)
         !! Calculate the stiffness matrix of bar in local coordinates
 
         ! =========================================================================================
         ! Vars statement
         ! =========================================================================================
         class(Bar) :: this
-        type(Node), intent(in) :: nodes(:)  !< Array of nodes
-        type(Material), intent(in) :: materials(:)  !< Array of materials
-        type(Section), intent(in) :: sections(:)  !< Array of sections
         integer, intent(in) :: element_dimension  !< Element dimension to local arrays
         character(2), intent(in) :: theory  !< Theory used (Euler-Bernoulli or Timoshenko)
         real(real64), allocatable :: kl(:, :)  !> The stiffness matrix in local coordinates
@@ -89,15 +84,13 @@ contains
 
         integer :: samples  ! Quantity of section samples
         real(real64) :: nu  ! Coefficient of Poison
-        type(Node) :: start_node  !< Start node of bar
-        type(Node) :: end_node  !< End node of bar
 
         ! =========================================================================================
         ! Initialization
         ! =========================================================================================
         allocate(kl(element_dimension, element_dimension))
 
-        samples = sections(this%section)%samples
+        samples = this%section%samples
         if (.not. allocated(el_px)) allocate(el_px(samples))
         if (.not. allocated(A)) allocate(A(samples))
         if (.not. allocated(As)) allocate(As(samples))
@@ -111,22 +104,20 @@ contains
         kl = 0d0
         AII = 0d0
         AFF = 0d0
-        E = materials(this%material)%E
+        E = this%material%E
 
-        G = materials(this%material)%G
+        G = this%material%G
         if (G == 0d0) then
-            nu = materials(this%material)%nu
+            nu = this%material%nu
             G = E / (2 * (1 + nu))
         end if
 
-        A = sections(this%section)%A
-        As = sections(this%section)%As
-        Iz = sections(this%section)%Iz
+        A = this%section%A
+        As = this%section%As
+        Iz = this%section%Iz
 
-        start_node = nodes(this%start_node)
-        end_node = nodes(this%end_node)
-        dx = end_node%x - start_node%x
-        dy = end_node%y - start_node%y
+        dx = this%end_node%x - this%start_node%x
+        dy = this%end_node%y - this%start_node%y
         L = sqrt(dx**2 + dy**2)
 
         ! Get points of sample sections
@@ -165,12 +156,11 @@ contains
     end function
 
 
-    function rotation_matrix(this, nodes, element_dimension) result(R)
+    function rotation_matrix(this, element_dimension) result(R)
         ! =========================================================================================
         ! Vars statement
         ! =========================================================================================
         class(Bar) :: this
-        type(Node), intent(in) :: nodes(:)  !< Array of nodes
         integer, intent(in) :: element_dimension  !< Element dimension to local arrays
         real(real64), allocatable :: R(:, :)
 
@@ -181,20 +171,15 @@ contains
         real(real64) :: y_vec(3)
         real(real64) :: z_vec(3)
 
-        type(Node) :: start_node  !< Start node of bar
-        type(Node) :: end_node  !< End node of bar
-
         ! =========================================================================================
         ! Initialization
         ! =========================================================================================
         allocate(R(element_dimension, element_dimension))
         R = 0d0
 
-        start_node = nodes(this%start_node)
-        end_node = nodes(this%end_node)
         e_vec = [ &
-            end_node%x - start_node%x, &
-            end_node%y - start_node%y, &
+            this%end_node%x - this%start_node%x, &
+            this%end_node%y - this%start_node%y, &
             0d0]
 
         if (e_vec(1) > 0) then
@@ -225,19 +210,13 @@ contains
     end function
 
 
-    function reactions( &
-        this, nodes, materials, sections, element_dimension, &
-        dof_per_node, theory, global_displacements &
-        ) result(ERl)
+    function reactions(this, element_dimension, dof_per_node, theory, global_displacements) result(ERl)
         !! Calculate the reactions of the bar in its local system from the global displacements
 
         ! =========================================================================================
         ! Vars statement
         ! =========================================================================================
         class(Bar) :: this
-        type(Node), intent(in) :: nodes(:)  !< Array of nodes
-        type(Material), intent(in) :: materials(:)  !< Array of materials
-        type(Section), intent(in) :: sections(:)  !< Array of sections
         integer, intent(in) :: element_dimension  !< Element dimension to local arrays
         integer, intent(in) :: dof_per_node  !< Degrees of freedom per node
         character(2), intent(in) :: theory  !< Theory used (Euler-Bernoulli or Timoshenko)
@@ -255,17 +234,17 @@ contains
         ! =========================================================================================
         ! Calculation
         ! =========================================================================================
-        si = (dof_per_node * (this%start_node - 1)) + 1
+        si = (dof_per_node * (this%start_node%id - 1)) + 1
         ei = si + dof_per_node - 1
 
-        sf = (dof_per_node * (this%end_node - 1)) + 1
+        sf = (dof_per_node * (this%end_node%id - 1)) + 1
         ef = sf + dof_per_node - 1
 
         EDg(:dof_per_node) = global_displacements(si:ei)
         EDg(dof_per_node+1:) = global_displacements(sf:ef)
 
-        R = this%rotation_matrix(nodes, element_dimension)
-        kl = this%stiffness_matrix_local_system(nodes, materials, sections, element_dimension, theory)
+        R = this%rotation_matrix(element_dimension)
+        kl = this%stiffness_matrix_local_system(element_dimension, theory)
 
         EDl = matmul(R, EDg)
 
@@ -274,19 +253,13 @@ contains
     end function
 
 
-    function efforts( &
-        this, nodes, materials, sections, element_dimension, &
-        dof_per_node, theory, global_displacements &
-        ) result(EEl)
+    function forces(this, element_dimension, dof_per_node, theory, global_displacements) result(EEl)
         !! Calculate the efforts of the bar from its reactions in local system
 
         ! =========================================================================================
         ! Vars statement
         ! =========================================================================================
         class(Bar) :: this
-        type(Node), intent(in) :: nodes(:)  !< Array of nodes
-        type(Material), intent(in) :: materials(:)  !< Array of materials
-        type(Section), intent(in) :: sections(:)  !< Array of sections
         integer, intent(in) :: element_dimension  !< Element dimension to local arrays
         integer, intent(in) :: dof_per_node  !< Degrees of freedom per node
         character(2), intent(in) :: theory  !< Theory used (Euler-Bernoulli or Timoshenko)
@@ -300,9 +273,8 @@ contains
         ! =========================================================================================
         ! Calculation
         ! =========================================================================================
-        ERl = this%reactions( &
-            nodes, materials, sections, element_dimension, dof_per_node, theory, global_displacements)
-        bar_length = this%length(nodes)
+        ERl = this%reactions(element_dimension, dof_per_node, theory, global_displacements)
+        bar_length = this%length()
 
         allocate(EEl(element_dimension))
         ! N and V are constant along the bar; M varies linearly without interior loads

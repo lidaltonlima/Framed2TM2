@@ -1,9 +1,10 @@
 module EntitySection
     use iso_fortran_env, only: real64
+    use EntityEntity, only: Entity
     implicit none
     private
 
-    type, public :: Section
+    type, public, extends(Entity) :: Section
         !! The entity Section
 
         integer :: samples = 1  !< Samples for properties

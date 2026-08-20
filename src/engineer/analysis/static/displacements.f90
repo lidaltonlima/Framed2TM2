@@ -46,17 +46,17 @@ contains
             node_support = structure%node_supports(i)
 
             if (node_support%Dx) then
-                Dx_index = (structure%dof_per_node * (node_support%node - 1)) + 1
+                Dx_index = (structure%dof_per_node * (node_support%node%id - 1)) + 1
                 results%displacements(Dx_index) = node_support%Dx_value
             end if
 
             if (node_support%Dy) then
-                Dy_index = (structure%dof_per_node * (node_support%node - 1)) + 2
+                Dy_index = (structure%dof_per_node * (node_support%node%id - 1)) + 2
                 results%displacements(Dy_index) = node_support%Dy_value
             end if
 
             if (node_support%Rz) then
-                Rz_index = (structure%dof_per_node * (node_support%node - 1)) + 3
+                Rz_index = (structure%dof_per_node * (node_support%node%id - 1)) + 3
                 results%displacements(Rz_index) = node_support%Rz_value
             end if
         end do

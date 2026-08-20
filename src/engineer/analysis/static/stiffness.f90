@@ -35,14 +35,12 @@ contains
         ! =========================================================================================
         ! Calculates
         ! =========================================================================================
-        R = structure%bars(id)%rotation_matrix(structure%nodes, structure%bar_dimension)
-        EKg = structure%bars(id)%stiffness_matrix_local_system( &
-            structure%nodes, structure%materials, structure%sections, &
-            structure%bar_dimension, structure%theory)
+        R = structure%bars(id)%rotation_matrix(structure%bar_dimension)
+        EKg = structure%bars(id)%stiffness_matrix_local_system(structure%bar_dimension, structure%theory)
         EKg = matmul(matmul(transpose(R), EKg), R)
 
-        start_node_id = structure%bars(id)%start_node
-        end_node_id = structure%bars(id)%end_node
+        start_node_id = structure%bars(id)%start_node%id
+        end_node_id = structure%bars(id)%end_node%id
 
         si = (structure%dof_per_node * (start_node_id - 1)) + 1  ! Start index of initial node
         ei = si + structure%dof_per_node - 1  ! End index of initial node

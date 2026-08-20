@@ -1,9 +1,4 @@
 # Tasks
 
-- [X] Read files
-- [X] Print data that were read
-- [ ] Add a really structure data
-- [ ] Create the same structure use PyNiteFEA
-- [ ] Add Stiffness Matrix module and compare the results with PyNiteFEA
-- [ ] Add vector loads module and compare the results with PyNiteFEA
-- [ ] Add module for no constant stiffness
+- [X] Não precisa da variável node_index no suporte e cargas porque isso já vem do
+próprio nó

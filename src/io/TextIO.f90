@@ -90,7 +90,7 @@ contains
         ! Vars statement
         ! =========================================================================================
         ! IO ******************************************************************
-        type(StructuralModel), intent(out) :: structure
+        type(StructuralModel), intent(out), target :: structure
 
         ! Controls ********************************************************************************
         integer :: file_unit  ! Unit to file
@@ -100,6 +100,11 @@ contains
 
         ! Temp ************************************************************************************
         integer :: temp_int
+        integer :: material_index  ! Index of material of current bar
+        integer :: section_index  ! Index of section of current bar
+        integer :: start_node_index  ! Index of start node of current bar
+        integer :: end_node_index  ! Index of end node of current bar
+        integer :: node_index  ! Index of node of current support/load
 
         ! =========================================================================================
         ! CONTROLS
@@ -152,6 +157,7 @@ contains
                 structure%materials(id)%G, &
                 structure%materials(id)%nu, &
                 structure%materials(id)%rho
+            structure%materials(id)%id = id
         end do
 
         ! Close ***********************************************************************************
@@ -184,6 +190,7 @@ contains
                 structure%sections(id)%A(:), &
                 structure%sections(id)%As(:), &
                 structure%sections(id)%Iz(:)
+            structure%sections(id)%id = id
         end do
 
         ! Close ***********************************************************************************
@@ -206,6 +213,7 @@ contains
             read(file_unit, *) &
                 structure%nodes(id)%x, &
                 structure%nodes(id)%y
+            structure%nodes(id)%id = id
         end do
 
         ! Close ***********************************************************************************
@@ -226,10 +234,16 @@ contains
         read(file_unit, *) ! titles line
         do id = 1, structure%qtd_bars
             read(file_unit, *) &
-                structure%bars(id)%material, &
-                structure%bars(id)%section, &
-                structure%bars(id)%start_node, &
-                structure%bars(id)%end_node
+                material_index, &
+                section_index, &
+                start_node_index, &
+                end_node_index
+
+            structure%bars(id)%material => structure%materials(material_index)
+            structure%bars(id)%section => structure%sections(section_index)
+            structure%bars(id)%start_node => structure%nodes(start_node_index)
+            structure%bars(id)%end_node => structure%nodes(end_node_index)
+            structure%bars(id)%id = id
         end do
 
         ! Close ***********************************************************************************
@@ -250,13 +264,16 @@ contains
         read(file_unit, *) ! titles line
         do id = 1, structure%qtd_nodes_support
             read(file_unit, *) &
-                structure%node_supports(id)%node, &
+                node_index, &
                 structure%node_supports(id)%Dx, &
                 structure%node_supports(id)%Dy, &
                 structure%node_supports(id)%Rz, &
                 structure%node_supports(id)%Dx_value, &
                 structure%node_supports(id)%Dy_value, &
                 structure%node_supports(id)%Rz_value
+
+            structure%node_supports(id)%node => structure%nodes(node_index)
+            structure%node_supports(id)%id = id
         end do
 
         ! Close ***********************************************************************************
@@ -277,10 +294,13 @@ contains
         read(file_unit, *) ! titles line
         do id = 1, structure%qtd_node_loads
             read(file_unit, *) &
-                structure%node_loads(id)%node, &
+                node_index, &
                 structure%node_loads(id)%Fx, &
                 structure%node_loads(id)%Fy, &
                 structure%node_loads(id)%Mz
+
+            structure%node_loads(id)%node => structure%nodes(node_index)
+            structure%node_loads(id)%id = id
         end do
 
         ! Close ***********************************************************************************
