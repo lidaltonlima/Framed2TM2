@@ -25,7 +25,7 @@ contains
 
         ! Auxiliaries *****************************************************************************
         real(real64), allocatable :: EKg(:, :)  !< element stiffness matrix in global system
-        real(real64) :: R(structure%bar_dimension, structure%bar_dimension)  !< Rotation matrix of bar
+        real(real64), allocatable :: R(:, :)  !< Rotation matrix of bar
         integer :: si, ei  !< start and end index in initial node
         integer :: sj, ej  !< start and end index in end node
 
@@ -35,8 +35,8 @@ contains
         ! =========================================================================================
         ! Calculates
         ! =========================================================================================
-        R = structure%bars(id)%rotation_matrix(structure%bar_dimension)
-        EKg = structure%bars(id)%stiffness_matrix_local_system(structure%bar_dimension, structure%theory)
+        R = structure%bars(id)%rotation_matrix()
+        EKg = structure%bars(id)%stiffness_matrix_local_system(structure%theory)
         EKg = matmul(matmul(transpose(R), EKg), R)
 
         start_node_id = structure%bars(id)%start_node%id

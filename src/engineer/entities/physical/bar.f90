@@ -41,6 +41,8 @@ module EntityBar
 
     real(real64), allocatable :: el_px(:)  ! Points of sample sections
 
+    integer, parameter :: dimension = 6
+
 contains
     function length(this)
         !! Calculate length of Bar
@@ -57,14 +59,13 @@ contains
     end function
 
 
-    function stiffness_matrix_local_system(this, element_dimension, theory) result(kl)
+    function stiffness_matrix_local_system(this, theory) result(kl)
         !! Calculate the stiffness matrix of bar in local coordinates
 
         ! =========================================================================================
         ! Vars statement
         ! =========================================================================================
         class(Bar) :: this
-        integer, intent(in) :: element_dimension  !< Element dimension to local arrays
         character(2), intent(in) :: theory  !< Theory used (Euler-Bernoulli or Timoshenko)
         real(real64), allocatable :: kl(:, :)  !> The stiffness matrix in local coordinates
 
@@ -88,7 +89,7 @@ contains
         ! =========================================================================================
         ! Initialization
         ! =========================================================================================
-        allocate(kl(element_dimension, element_dimension))
+        allocate(kl(dimension, dimension))
 
         samples = this%section%samples
         if (.not. allocated(el_px)) allocate(el_px(samples))
@@ -156,12 +157,11 @@ contains
     end function
 
 
-    function rotation_matrix(this, element_dimension) result(R)
+    function rotation_matrix(this) result(R)
         ! =========================================================================================
         ! Vars statement
         ! =========================================================================================
         class(Bar) :: this
-        integer, intent(in) :: element_dimension  !< Element dimension to local arrays
         real(real64), allocatable :: R(:, :)
 
         ! Aux *************************************************************************************
@@ -174,7 +174,7 @@ contains
         ! =========================================================================================
         ! Initialization
         ! =========================================================================================
-        allocate(R(element_dimension, element_dimension))
+        allocate(R(dimension, dimension))
         R = 0d0
 
         e_vec = [ &
@@ -210,14 +210,13 @@ contains
     end function
 
 
-    function reactions(this, element_dimension, dof_per_node, theory, global_displacements) result(ERl)
+    function reactions(this, dof_per_node, theory, global_displacements) result(ERl)
         !! Calculate the reactions of the bar in its local system from the global displacements
 
         ! =========================================================================================
         ! Vars statement
         ! =========================================================================================
         class(Bar) :: this
-        integer, intent(in) :: element_dimension  !< Element dimension to local arrays
         integer, intent(in) :: dof_per_node  !< Degrees of freedom per node
         character(2), intent(in) :: theory  !< Theory used (Euler-Bernoulli or Timoshenko)
         real(real64), intent(in) :: global_displacements(:)  !< Displacements in global system
@@ -226,8 +225,8 @@ contains
         ! Aux *************************************************************************************
         real(real64), allocatable :: R(:, :)  ! Rotation matrix of bar
         real(real64), allocatable :: kl(:, :)  ! Stiffness matrix of bar in local system
-        real(real64) :: EDg(element_dimension)  ! Element displacement in global system
-        real(real64) :: EDl(element_dimension)  ! Element displacement in local system
+        real(real64) :: EDg(dimension)  ! Element displacement in global system
+        real(real64) :: EDl(dimension)  ! Element displacement in local system
         integer :: si, ei  ! start and end index in start node
         integer :: sf, ef  ! start and end index in end node
 
@@ -243,24 +242,23 @@ contains
         EDg(:dof_per_node) = global_displacements(si:ei)
         EDg(dof_per_node+1:) = global_displacements(sf:ef)
 
-        R = this%rotation_matrix(element_dimension)
-        kl = this%stiffness_matrix_local_system(element_dimension, theory)
+        R = this%rotation_matrix()
+        kl = this%stiffness_matrix_local_system(theory)
 
         EDl = matmul(R, EDg)
 
-        allocate(ERl(element_dimension))
+        allocate(ERl(dimension))
         ERl = matmul(kl, EDl)
     end function
 
 
-    function forces(this, element_dimension, dof_per_node, theory, global_displacements) result(EEl)
+    function forces(this, dof_per_node, theory, global_displacements) result(EEl)
         !! Calculate the efforts of the bar from its reactions in local system
 
         ! =========================================================================================
         ! Vars statement
         ! =========================================================================================
         class(Bar) :: this
-        integer, intent(in) :: element_dimension  !< Element dimension to local arrays
         integer, intent(in) :: dof_per_node  !< Degrees of freedom per node
         character(2), intent(in) :: theory  !< Theory used (Euler-Bernoulli or Timoshenko)
         real(real64), intent(in) :: global_displacements(:)  !< Displacements in global system
@@ -273,10 +271,10 @@ contains
         ! =========================================================================================
         ! Calculation
         ! =========================================================================================
-        ERl = this%reactions(element_dimension, dof_per_node, theory, global_displacements)
+        ERl = this%reactions(dof_per_node, theory, global_displacements)
         bar_length = this%length()
 
-        allocate(EEl(element_dimension))
+        allocate(EEl(dimension))
         ! N and V are constant along the bar; M varies linearly without interior loads
         EEl(1) = -ERl(1)
         EEl(2) = -ERl(2)

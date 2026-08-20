@@ -116,5 +116,8 @@
     "sections": "cue",
     "element": "container",
     "elements": "container"
+  },
+  "chat.tools.terminal.autoApprove": {
+    "fpm": true
   }
 }

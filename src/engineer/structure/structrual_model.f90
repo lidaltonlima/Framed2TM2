@@ -24,7 +24,6 @@ module structural_model
         type(Section), allocatable :: sections(:)  !< Array of sections
 
         integer :: global_dimension  !< Dimension of problem to global arrays
-        integer :: bar_dimension  ! Element dimension to local arrays
         integer :: qtd_nodes  !< Quantity of nodes
         integer :: qtd_nodes_support!< Quantity of nodes with prescribed amount of displacement
         integer :: qtd_nodes_with_loads  !< Quantity of nodes
@@ -34,16 +33,5 @@ module structural_model
         integer :: qtd_sections  !< Quantity of sections
         integer :: qtd_node_loads  !< Quantity of nodes with point load
         character(2) :: theory !< Theory used (Euler-Bernoulli or Timoshenko
-    contains
-        procedure :: initialize_vars
     end type
-
-contains
-    subroutine initialize_vars(this)
-        class(StructuralModel) :: this
-
-        ! Calculate the dimension of arrays
-        this%global_dimension = this%qtd_nodes * this%dof_per_node
-        this%bar_dimension = 2 * this%dof_per_node
-    end subroutine
 end module

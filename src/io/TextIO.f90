@@ -305,5 +305,7 @@ contains
 
         ! Close ***********************************************************************************
         close(file_unit)
+
+        structure%global_dimension = structure%qtd_nodes * structure%dof_per_node
     end subroutine get_structure_data
 end module

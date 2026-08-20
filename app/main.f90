@@ -19,7 +19,6 @@ program main
     ! =========================================================================
     ! Get data from files
     call get_structure_data(structure)
-    call structure%initialize_vars
 
     allocate(static_analysis_results)
     call static_analysis_solver_exec(structure, static_analysis_results)
@@ -29,7 +28,6 @@ program main
 
         bar_loop: do i = 1, structure%qtd_bars
             write(*, '(*(ES15.4))') structure%bars(i)%forces( &
-                structure%bar_dimension, &
                 structure%dof_per_node, &
                 structure%theory, &
                 static_analysis_results%displacements &

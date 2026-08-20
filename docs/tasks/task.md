@@ -1,4 +1,5 @@
 # Tasks
 
-- [X] Não precisa da variável node_index no suporte e cargas porque isso já vem do
-próprio nó
+- [ ] Dividir o arquivo bar em arquivos menores. Principalmente o cálculo dos
+coeficientes de rigidez (não a matrix, apenas os coeficientes)
+
