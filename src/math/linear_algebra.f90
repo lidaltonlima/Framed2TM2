@@ -107,7 +107,6 @@ contains
         ! Process *********************************************************************************
         ! Invert the apart element
         inv_special(1, 1) = 1 / mat(1, 1)
-        inv_special(2, 2) = det
 
         ! Invert the 2x2 matrix using single method
         work_mat = mat(2:3, 2:3)

@@ -1,5 +1,8 @@
 program StructureTest
     use iso_fortran_env, only: error_unit
+
+    use text_io, only: count_file_lines
+
     implicit none
 
     ! =============================================================================================
@@ -11,12 +14,10 @@ program StructureTest
     ! General *************************************************************************************
     integer :: file_unit_t, file_unit_r  ! number of unit file
     character(300) :: line_t, line_r  ! value of line readd
-    integer :: ios  ! state of read
 
     ! Aux *****************************************************************************************
     integer :: line_number  ! number of current line
     integer :: qtd_lines  ! quantity of lines in the right document
-    character :: line  ! text in the line
     integer :: i  ! index for loops
 
     ! =============================================================================================
@@ -34,18 +35,7 @@ program StructureTest
     write(*, *)
 
     ! Get number of lines *************************************************************************
-    open(newUnit=file_unit_r, &
-        file='./test/data/results.dat', &
-        status='old', &
-        action='read')
-
-    do
-        read(file_unit_r, '(A)', ioStat=ios) line
-        if (ios /= 0) exit   ! sai do loop ao encontrar EOF ou erro
-        qtd_lines = qtd_lines + 1
-    end do
-
-    close(file_unit_r)
+    qtd_lines = count_file_lines('./test/data/results.dat')
 
     ! Open ****************************************************************************************
     open(newUnit=file_unit_t, &

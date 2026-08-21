@@ -88,7 +88,7 @@ contains
 
 
     function count_file_lines(file_name) result(line_count)
-        !! Count how many non-blank (written) lines a data file has
+        !! Count how many lines a data file has
 
         ! =========================================================================================
         ! Vars statement
@@ -100,13 +100,19 @@ contains
         ! aux
         integer :: file_unit  !< Unit to file
         integer :: read_stat  !< State of current read
-        character :: line  ! Current read line
+        character(1024) :: line  ! Current read line
+        character(:), allocatable :: file_path  ! Complete path to file
 
         ! =========================================================================================
         ! Process
         ! =========================================================================================
         ! Open ************************************************************************************
-        call open_data_file(file_name, file_unit)
+        if (index(file_name, '/') > 0 .or. index(file_name, '\\') > 0) then
+            file_path = trim(file_name)
+            open(newUnit=file_unit, file=file_path, status='old', action='read')
+        else
+            call open_data_file(file_name, file_unit)
+        end if
 
         ! Read ************************************************************************************
         line_count = 0
@@ -115,7 +121,7 @@ contains
 
             if (read_stat /= 0) exit
 
-            if (len_trim(line) > 0) line_count = line_count + 1
+            line_count = line_count + 1
         end do
 
         ! Close ***********************************************************************************
