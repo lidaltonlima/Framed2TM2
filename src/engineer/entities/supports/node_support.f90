@@ -7,12 +7,23 @@ module entity_node_support
     private
 
     type, public, extends(Entity) :: NodeSupport
-        type(Node), pointer :: node => null()  !< Node with the prescribed support
-        logical :: Dx
-        logical :: Dy
-        logical :: Rz
+        !! Support applied in node
+
+        !< Node with the prescribed support
+        type(Node), pointer :: node => null()
+
+        logical :: Dx  !< If there is support to displacement **x** direction
+        logical :: Dy  !< If there is support to displacement **y** direction
+        logical :: Rz  !< If there is support to rotation **z** direction
+
+
+        !> Value for prescribed displacement in **x** direction
         real(real64) :: Dx_value
+
+        !> Value for prescribed displacement in **y** direction
         real(real64) :: Dy_value
+
+        !> Value for prescribed rotation around **z** axis
         real(real64) :: Rz_value
     end type
 end module

@@ -19,13 +19,22 @@ contains
         ! Vars statement
         ! =====================================================================
         ! I/O *****************************************************************
-        type(StructuralModel), intent(in) :: structure  !< The structural model
-        integer, intent(in) :: id  !< index of element
-        real(real64), allocatable, intent(inout) :: K(:, :)  !< Global stiffness global
+        !> The structural model
+        type(StructuralModel), intent(in) :: structure
+
+        !> index of element
+        integer, intent(in) :: id
+
+        !> Global stiffness global
+        real(real64), allocatable, intent(inout) :: K(:, :)
 
         ! Auxiliaries *********************************************************
-        real(real64), allocatable :: EKg(:, :)  !< element stiffness matrix in global system
-        real(real64), allocatable :: R(:, :)  !< Rotation matrix of bar
+        !> element stiffness matrix in global system
+        real(real64), allocatable :: EKg(:, :)
+
+        !> Rotation matrix of bar
+        real(real64), allocatable :: R(:, :)
+
         integer :: si, ei  !< start and end index in initial node
         integer :: sj, ej  !< start and end index in end node
 
@@ -42,11 +51,15 @@ contains
         start_node_id = structure%bars(id)%start_node%id
         end_node_id = structure%bars(id)%end_node%id
 
-        si = (structure%dof_per_node * (start_node_id - 1)) + 1  ! Start index of initial node
-        ei = si + structure%dof_per_node - 1  ! End index of initial node
+        ! Start index of initial node
+        si = (structure%dof_per_node * (start_node_id - 1)) + 1
+        ! End index of initial node
+        ei = si + structure%dof_per_node - 1
 
-        sj = (structure%dof_per_node * (end_node_id - 1)) + 1  ! Start index of end node
-        ej = sj + structure%dof_per_node - 1  ! End index of end node
+        ! Start index of end node
+        sj = (structure%dof_per_node * (end_node_id - 1)) + 1
+        ! End index of end node
+        ej = sj + structure%dof_per_node - 1
 
 
         K(si:ei, si:ei) = K(si:ei, si:ei) + EKg(:3, :3)  ! k_ii
@@ -63,8 +76,11 @@ contains
         ! Vars statement
         ! =====================================================================
         ! I/O *****************************************************************
-        type(StructuralModel), intent(in) :: structure  !< The structural model
-        type(StaticAnalysisResults), intent(inout) :: results  !< Static analysis results
+        !> The structural model
+        type(StructuralModel), intent(in) :: structure
+
+        !> Static analysis results
+        type(StaticAnalysisResults), intent(inout) :: results
 
         ! Aux *****************************************************************
         integer :: id  ! Id of bar

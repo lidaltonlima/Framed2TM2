@@ -16,22 +16,43 @@ module structural_model
     type, public :: StructuralModel
         !! All data of structure
 
-        type(Bar), allocatable :: bars(:)  !< Array of bars
-        type(Material), allocatable :: materials(:)  !< Array of materiais
-        type(NodeLoad), allocatable :: node_loads(:)  !< Array of node loads
-        type(Node), allocatable :: nodes(:)  !< Array of nodes
-        type(NodeSupport), allocatable :: node_supports(:) !< Array of node supports
-        type(Section), allocatable :: sections(:)  !< Array of sections
+        ! Arrays **************************************************************
+        !> Array of bars
+        type(Bar), allocatable :: bars(:)
 
+        !> Array of materiais
+        type(Material), allocatable :: materials(:)
+
+        !> Array of node loads
+        type(NodeLoad), allocatable :: node_loads(:)
+
+        !> Array of nodes
+        type(Node), allocatable :: nodes(:)
+
+        !> Array of node supports
+        type(NodeSupport), allocatable :: node_supports(:)
+
+        !> Array of sections
+        type(Section), allocatable :: sections(:)
+
+
+        ! Control vars ********************************************************
         integer :: global_dimension  !< Dimension of problem to global arrays
-        integer :: qtd_nodes  !< Quantity of nodes
-        integer :: qtd_nodes_support!< Quantity of nodes with prescribed amount of displacement
+
+        !> Quantity of nodes
+        integer :: qtd_nodes
+
+        !< Quantity of nodes with prescribed amount of displacement
+        integer :: qtd_nodes_support
+
         integer :: qtd_nodes_with_loads  !< Quantity of nodes
         integer :: qtd_bars  !< Quantity of elements
         integer :: dof_per_node  !< Degrees of freedom per node
         integer :: qtd_materials  !< Quantity of materials
         integer :: qtd_sections  !< Quantity of sections
         integer :: qtd_node_loads  !< Quantity of nodes with point load
-        character(2) :: theory !< Theory used (Euler-Bernoulli or Timoshenko
+
+        !> Theory used (EB: Euler-Bernoulli or TM: Timoshenko)
+        character(2) :: theory
     end type
 end module

@@ -1,4 +1,4 @@
 # Tasks
 
-- [ ] Dividir o arquivo bar em arquivos menores. Principalmente o cálculo dos
-coeficientes de rigidez (não a matrix, apenas os coeficientes)
+- [ ] Criar variáveis auxiliares para ficar mais fácil a leitura do código
+      principalmente no text_io

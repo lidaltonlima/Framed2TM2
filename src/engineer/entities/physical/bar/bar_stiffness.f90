@@ -21,17 +21,17 @@ contains
         kl = 0d0
         AII = 0d0
         AFF = 0d0
-        E = this%material%E
+        E = this%material%long_elasticity
 
-        G = this%material%G
+        G = this%material%trans_elasticity
         if (G == 0d0) then
-            nu = this%material%nu
+            nu = this%material%poison_ratio
             G = E / (2 * (1 + nu))
         end if
 
-        A = this%section%A
-        As = this%section%As
-        Iz = this%section%Iz
+        A = this%section%area
+        As = this%section%shear_area_y
+        Iz = this%section%inertia_z
 
         dx = this%end_node%x - this%start_node%x
         dy = this%end_node%y - this%start_node%y

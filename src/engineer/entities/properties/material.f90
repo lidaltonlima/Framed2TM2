@@ -7,9 +7,9 @@ module entity_material
     type, public, extends(Entity) :: Material
         !! The entity Material
 
-        real(real64) :: E  !< Module of longitudinal elasticity
-        real(real64) :: G  !< Module of transversal elasticity
-        real(real64) :: nu !< Coefficient of Poison
-        real(real64) :: rho !< Density
+        real(real64) :: long_elasticity  !< Module of longitudinal elasticity
+        real(real64) :: trans_elasticity  !< Module of transversal elasticity
+        real(real64) :: poison_ratio !< Coefficient of Poison
+        real(real64) :: density !< Density
     end type
 end module

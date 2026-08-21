@@ -7,9 +7,16 @@ module entity_section
     type, public, extends(Entity) :: Section
         !! The entity Section
 
-        integer :: samples = 1  !< Samples for properties
-        real(real64), allocatable :: A(:)  !< Samples array of area
-        real(real64), allocatable :: As(:)  !< Samples array of shear area
-        real(real64), allocatable :: Iz(:) !< Samples array of inertia around z axis
+        !> Samples for properties
+        integer :: samples = 1
+
+        !> Samples array of area
+        real(real64), allocatable :: area(:)
+
+        !> Samples array of shear area in **y** direction
+        real(real64), allocatable :: shear_area_y(:)
+
+        !> Samples array of inertia around **z** axis
+        real(real64), allocatable :: inertia_z(:)
     end type
 end module

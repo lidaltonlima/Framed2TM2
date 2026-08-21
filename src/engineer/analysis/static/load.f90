@@ -20,8 +20,11 @@ contains
         ! Vars statement
         ! =====================================================================
         ! I/O *****************************************************************
-        type(StructuralModel), intent(in) :: structure  !< The structural model
-        type(StaticAnalysisResults), intent(inout) :: results  !< Static analysis results
+        !> The structural model
+        type(StructuralModel), intent(in) :: structure
+
+        !> Static analysis results
+        type(StaticAnalysisResults), intent(inout) :: results
 
         ! Aux *****************************************************************
         integer :: i ! indices
@@ -35,7 +38,7 @@ contains
         integer :: Rz_index
         type(NodeLoad) :: node_load
         type(NodeSupport) :: node_support
-        real(real64), allocatable :: Dp(:)  ! Vector of loads
+        real(real64), allocatable :: Dp(:)  !: Vector of loads
 
 
         ! =====================================================================
@@ -56,9 +59,12 @@ contains
             Fy_index = (structure%dof_per_node * (node_load%node%id - 1)) + 2
             Mz_index = (structure%dof_per_node * (node_load%node%id - 1)) + 3
 
-            results%load_vector(Fx_index) = results%load_vector(Fx_index) + node_load%Fx
-            results%load_vector(Fy_index) = results%load_vector(Fy_index) + node_load%Fy
-            results%load_vector(Mz_index) = results%load_vector(Mz_index) + node_load%Mz
+            results%load_vector(Fx_index) = &
+                results%load_vector(Fx_index) + node_load%Fx
+            results%load_vector(Fy_index) = &
+                results%load_vector(Fy_index) + node_load%Fy
+            results%load_vector(Mz_index) = &
+                results%load_vector(Mz_index) + node_load%Mz
         end do
 
         Dp = 0d0
@@ -66,21 +72,25 @@ contains
             node_support = structure%node_supports(i)
 
             if (node_support%Dx) then
-                Dx_index = (structure%dof_per_node * (node_support%node%id - 1)) + 1
+                Dx_index = &
+                    (structure%dof_per_node * (node_support%node%id - 1)) + 1
                 Dp(Dx_index) = node_support%Dx_value
             end if
 
             if (node_support%Dy) then
-                Dy_index = (structure%dof_per_node * (node_support%node%id - 1)) + 2
+                Dy_index = &
+                    (structure%dof_per_node * (node_support%node%id - 1)) + 2
                 Dp(Dy_index) = node_support%Dy_value
             end if
 
             if (node_support%Rz) then
-                Rz_index = (structure%dof_per_node * (node_support%node%id - 1)) + 3
+                Rz_index = &
+                    (structure%dof_per_node * (node_support%node%id - 1)) + 3
                 Dp(Rz_index) = node_support%Rz_value
             end if
         end do
 
-        results%load_vector = results%load_vector - matmul(results%stiffness_matrix, Dp)
+        results%load_vector = &
+            results%load_vector - matmul(results%stiffness_matrix, Dp)
     end subroutine
 end module

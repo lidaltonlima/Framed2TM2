@@ -19,8 +19,11 @@ contains
         ! Vars statement
         ! =====================================================================
         ! I/O *****************************************************************
-        type(StructuralModel), intent(in) :: structure  !< The structural model
-        type(StaticAnalysisResults), intent(inout) :: results  !< Static analysis results
+        !> The structural model
+        type(StructuralModel), intent(in) :: structure
+
+        !> Static analysis results
+        type(StaticAnalysisResults), intent(inout) :: results
 
         ! Aux *****************************************************************
         type(NodeSupport) :: node_support
@@ -35,28 +38,36 @@ contains
         ! Calculation
         ! =====================================================================
         ! Add boundary ********************************************************
-        call apply_supports(structure, results%stiffness_matrix, results%load_vector)
+        call apply_supports( &
+            structure, &
+            results%stiffness_matrix, &
+            results%load_vector )
 
         ! Solution the system *************************************************
         call solve_symmetric_positive_definite_system( &
-            results%stiffness_matrix, results%load_vector, results%displacements)
+            results%stiffness_matrix, &
+            results%load_vector, &
+            results%displacements)
 
         ! Sum the prescribed displacement *************************************
         do i = 1, structure%qtd_nodes_support
             node_support = structure%node_supports(i)
 
             if (node_support%Dx) then
-                Dx_index = (structure%dof_per_node * (node_support%node%id - 1)) + 1
+                Dx_index = &
+                    (structure%dof_per_node * (node_support%node%id - 1)) + 1
                 results%displacements(Dx_index) = node_support%Dx_value
             end if
 
             if (node_support%Dy) then
-                Dy_index = (structure%dof_per_node * (node_support%node%id - 1)) + 2
+                Dy_index = &
+                    (structure%dof_per_node * (node_support%node%id - 1)) + 2
                 results%displacements(Dy_index) = node_support%Dy_value
             end if
 
             if (node_support%Rz) then
-                Rz_index = (structure%dof_per_node * (node_support%node%id - 1)) + 3
+                Rz_index = &
+                    (structure%dof_per_node * (node_support%node%id - 1)) + 3
                 results%displacements(Rz_index) = node_support%Rz_value
             end if
         end do
