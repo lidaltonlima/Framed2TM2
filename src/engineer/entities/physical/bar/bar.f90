@@ -122,7 +122,9 @@ contains
         integer, intent(in) :: dof_per_node  !< Degrees of freedom per node
         character(2), intent(in) :: theory  !< Theory used (Euler-Bernoulli or Timoshenko)
         real(real64), intent(in) :: global_displacements(:)  !< Displacements in global system
-        real(real64), allocatable :: ERl(:)  !> The reactions of bar in local system
+
+        !> The reactions of the bar in the local coordinate system.
+        real(real64), allocatable :: ERl(:)
 
         ! Aux *****************************************************************
         real(real64), allocatable :: R(:, :)  ! Rotation matrix of bar
@@ -164,7 +166,9 @@ contains
         integer, intent(in) :: dof_per_node  !< Degrees of freedom per node
         character(2), intent(in) :: theory  !< Theory used (Euler-Bernoulli or Timoshenko)
         real(real64), intent(in) :: global_displacements(:)  !< Displacements in global system
-        real(real64), allocatable :: EEl(:)  !> The efforts of bar
+
+        !> The internal efforts of the bar in the local coordinate system.
+        real(real64), allocatable :: EEl(:)
 
         ! Aux *****************************************************************
         real(real64), allocatable :: ERl(:)  ! Reactions of bar in local system

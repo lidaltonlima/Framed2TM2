@@ -1,5 +1,8 @@
 module structural_model
-    !! Module to StructuralModel
+    !! Data structure representing the discrete model of a framed system.
+    !!
+    !! The model aggregates all geometric, material, loading, and boundary
+    !! data needed by the finite element solver.
 
     use iso_fortran_env, only: real64
 
@@ -14,45 +17,47 @@ module structural_model
     private
 
     type, public :: StructuralModel
-        !! All data of structure
+        !! In-memory representation of a plane-frame structural model.
+        !!
+        !! The arrays below are populated by the input reader and then consumed
+        !! by the assembly and solver routines.
 
         ! Arrays **************************************************************
-        !> Array of bars
+        !> Collection of structural members that connect the nodes.
         type(Bar), allocatable :: bars(:)
 
-        !> Array of materiais
+        !> Material properties associated with the bars.
         type(Material), allocatable :: materials(:)
 
-        !> Array of node loads
+        !> Nodal loads applied to the structure.
         type(NodeLoad), allocatable :: node_loads(:)
 
-        !> Array of nodes
+        !> Nodal coordinates and identifiers.
         type(Node), allocatable :: nodes(:)
 
-        !> Array of node supports
+        !> Support conditions and prescribed displacement boundary values.
         type(NodeSupport), allocatable :: node_supports(:)
 
-        !> Array of sections
+        !> Section properties used by the element formulation.
         type(Section), allocatable :: sections(:)
 
-
         ! Control vars ********************************************************
-        integer :: global_dimension  !< Dimension of problem to global arrays
+        integer :: global_dimension  !< Total number of degrees of freedom in the assembled system.
 
-        !> Quantity of nodes
+        !> Number of nodes in the model.
         integer :: qtd_nodes
 
-        !< Quantity of nodes with prescribed amount of displacement
+        !> Number of supports with constrained or prescribed nodal displacements.
         integer :: qtd_nodes_support
 
-        integer :: num_nodes_with_loads  !< Quantity of nodes
-        integer :: num_bars  !< Quantity of elements
-        integer :: dof_per_node  !< Degrees of freedom per node
-        integer :: num_materials  !< Quantity of materials
-        integer :: num_sections  !< Quantity of sections
-        integer :: num_node_loads  !< Quantity of nodes with point load
+        integer :: num_nodes_with_loads  !< Number of nodes with applied loads.
+        integer :: num_bars              !< Number of frame elements.
+        integer :: dof_per_node          !< Degrees of freedom per node (for this project, typically 3).
+        integer :: num_materials         !< Number of material definitions.
+        integer :: num_sections          !< Number of section definitions.
+        integer :: num_node_loads        !< Number of nodal load entries.
 
-        !> Theory used (EB: Euler-Bernoulli or TM: Timoshenko)
+        !> Element theory used in the formulation: EB for Euler-Bernoulli or TM for Timoshenko.
         character(2) :: theory
     end type
 end module

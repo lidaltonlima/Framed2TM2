@@ -71,8 +71,10 @@
   "cSpell.language": "en, pt-BR",
   "cSpell.words": [
     "ccno",
+    "coloured",
     "dgetrf",
     "dgetri",
+    "docmark",
     "dposv",
     "inout",
     "ipiv",
@@ -118,6 +120,7 @@
     "elements": "container"
   },
   "chat.tools.terminal.autoApprove": {
-    "fpm": true
+    "fpm": true,
+    "ford": true
   }
 }

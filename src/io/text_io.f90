@@ -1,4 +1,10 @@
 module text_io
+    !! Input/output utilities for the structural model and result export.
+    !!
+    !! This module reads the model from plain text data files and writes the
+    !! solved response back to a human-readable summary. It also centralizes the
+    !! file-opening and I/O error checks used throughout the project.
+
     use iso_fortran_env, only: ioStat_end, real64
 
     use structural_model, only: StructuralModel
@@ -15,7 +21,7 @@ module text_io
 
 contains
     subroutine check_read_status(file_path, io_stat, io_msg)
-        !! Check the read status. If error stop the program and show error.
+        !! Check the status returned by a file read and stop on failure.
 
         ! =====================================================================
         ! Vars statement
