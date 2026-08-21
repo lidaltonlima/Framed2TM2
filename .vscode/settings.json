@@ -76,6 +76,7 @@
     "dgetri",
     "docmark",
     "dposv",
+    "Graphviz",
     "inout",
     "ipiv",
     "itydisp",

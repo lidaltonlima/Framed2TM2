@@ -22,3 +22,22 @@ The project aims to provide a compact but extensible finite element engine for e
 ## Documentation
 
 The project documentation is generated with Ford and can be built from the settings in [ford.md](ford.md).
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- **Fortran**
+- **Python**
+- **Ford**
+- **Graphviz**
+
+### Installation
+
+**Ford**: With Python installed execute the command `pip install ford`.
+
+**Graphviz**: Get the binary in [Graphviz](https://graphviz.org/) install and add to path.
+
+## Generate documentation
+
+execute the command `ford ford.md`.
