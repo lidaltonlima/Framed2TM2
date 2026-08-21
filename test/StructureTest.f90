@@ -19,6 +19,7 @@ program StructureTest
     integer :: line_number  ! number of current line
     integer :: qtd_lines  ! quantity of lines in the right document
     integer :: i  ! index for loops
+    logical :: test_failed
 
     ! =============================================================================================
     ! Process
@@ -35,6 +36,7 @@ program StructureTest
     write(*, *)
 
     ! Get number of lines *************************************************************************
+    test_failed = .false.
     qtd_lines = count_file_lines('./test/data/results.dat')
 
     ! Open ****************************************************************************************
@@ -58,6 +60,8 @@ program StructureTest
     ! Close ***************************************************************************************
     close(file_unit_t)
     close(file_unit_r)
+
+    if (test_failed) error stop 'Generated results differ from the reference file.'
 
     ! Footer **************************************************************************************
     write(*, *)
@@ -86,6 +90,8 @@ contains
     end subroutine
 
     subroutine show_test_value
+        if (line_t /= line_r) test_failed = .true.
+
         if (detail) then
             call show_details
         else

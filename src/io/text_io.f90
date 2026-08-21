@@ -1,5 +1,5 @@
 module text_io
-    use iso_fortran_env, only: real64
+    use iso_fortran_env, only: ioStat_end, real64
     use structural_model, only: StructuralModel
     use static_analysis_results, only: StaticAnalysisResults
     use precision, only: disp_tolerance, force_tolerance
@@ -10,6 +10,20 @@ module text_io
     public count_file_lines
     public save_results
 contains
+    subroutine check_read_status(read_stat, file_name)
+        !! Check the read status. If error stop the program and show error.
+
+        integer, intent(in) :: read_stat
+        character(*), intent(in) :: file_name
+
+        if (read_stat /= 0) then
+            write(*, '(A, A, A, I0)') &
+                'Error reading ', trim(file_name), ', IO_STAT=', read_stat
+            error stop 'File read'
+        end if
+    end subroutine check_read_status
+
+
     subroutine open_data_file(file_name,  file_unit)
         ! Open the file to get data
 
@@ -49,6 +63,7 @@ contains
             error stop 'File open'
         end if
     end subroutine open_data_file
+
 
     subroutine save_data_file(file_name,  file_unit)
         ! Save data in file
@@ -102,14 +117,21 @@ contains
         integer :: read_stat  !< State of current read
         character(1024) :: line  ! Current read line
         character(:), allocatable :: file_path  ! Complete path to file
+        character(:), allocatable :: file_error
 
         ! =========================================================================================
         ! Process
         ! =========================================================================================
         ! Open ************************************************************************************
+        file_path = trim(file_name)
         if (index(file_name, '/') > 0 .or. index(file_name, '\\') > 0) then
-            file_path = trim(file_name)
-            open(newUnit=file_unit, file=file_path, status='old', action='read')
+            open(newUnit=file_unit, file=file_path, status='old', action='read', &
+                ioStat=read_stat, ioMsg=file_error)
+            if (read_stat /= 0) then
+                write(*, '(A, A, A, I0, A, A)') 'Error opening ', trim(file_path), ', IO_STAT=', &
+                    read_stat, ', IO_MSG=', file_error
+                error stop 'File open'
+            end if
         else
             call open_data_file(file_name, file_unit)
         end if
@@ -119,7 +141,8 @@ contains
         do
             read(file_unit, '(A)', ioStat=read_stat) line
 
-            if (read_stat /= 0) exit
+            if (read_stat == ioStat_end) exit
+            call check_read_status(read_stat, file_path)
 
             line_count = line_count + 1
         end do
@@ -173,7 +196,7 @@ contains
                             structure%theory = 'TM'
                         end if
                 end select
-            else if (read_stat == -1) then
+            else if (read_stat == ioStat_end) then
                 exit CONTROLS
             else
                 write(*, *) 'Read stat:', read_stat
@@ -196,13 +219,15 @@ contains
         call open_data_file('materials', file_unit)
 
         ! Read ************************************************************************************
-        read(file_unit, *) ! titles line
+        read(file_unit, *, ioStat=read_stat) ! titles line
+        call check_read_status(read_stat, 'materials.dat')
         do id = 1, structure%qtd_materials
-            read(file_unit, *) &
+            read(file_unit, *, ioStat=read_stat) &
                 structure%materials(id)%E, &
                 structure%materials(id)%G, &
                 structure%materials(id)%nu, &
                 structure%materials(id)%rho
+            call check_read_status(read_stat, 'materials.dat')
             structure%materials(id)%id = id
         end do
 
@@ -221,21 +246,24 @@ contains
         call open_data_file('sections', file_unit)
 
         ! Read ************************************************************************************
-        read(file_unit, *) ! titles line
+        read(file_unit, *, ioStat=read_stat) ! titles line
+        call check_read_status(read_stat, 'sections.dat')
         do id = 1, structure%qtd_sections
             ! Internal allocation
-            read(file_unit, *) structure%sections(id)%samples
+            read(file_unit, *, ioStat=read_stat) structure%sections(id)%samples
+            call check_read_status(read_stat, 'sections.dat')
             allocate(structure%sections(id)%A(structure%sections(id)%samples))
             allocate(structure%sections(id)%As(structure%sections(id)%samples))
             allocate(structure%sections(id)%Iz(structure%sections(id)%samples))
             backspace file_unit
 
             ! Read data
-            read(file_unit, *) &
+            read(file_unit, *, ioStat=read_stat) &
                 structure%sections(id)%samples, &
                 structure%sections(id)%A(:), &
                 structure%sections(id)%As(:), &
                 structure%sections(id)%Iz(:)
+            call check_read_status(read_stat, 'sections.dat')
             structure%sections(id)%id = id
         end do
 
@@ -254,11 +282,13 @@ contains
         call open_data_file('nodes', file_unit)
 
         ! Read ************************************************************************************
-        read(file_unit, *) ! titles line
+        read(file_unit, *, ioStat=read_stat) ! titles line
+        call check_read_status(read_stat, 'nodes.dat')
         do id = 1, structure%qtd_nodes
-            read(file_unit, *) &
+            read(file_unit, *, ioStat=read_stat) &
                 structure%nodes(id)%x, &
                 structure%nodes(id)%y
+            call check_read_status(read_stat, 'nodes.dat')
             structure%nodes(id)%id = id
         end do
 
@@ -277,13 +307,15 @@ contains
         call open_data_file('bars', file_unit)
 
         ! Read ************************************************************************************
-        read(file_unit, *) ! titles line
+        read(file_unit, *, ioStat=read_stat) ! titles line
+        call check_read_status(read_stat, 'bars.dat')
         do id = 1, structure%qtd_bars
-            read(file_unit, *) &
+            read(file_unit, *, ioStat=read_stat) &
                 material_index, &
                 section_index, &
                 start_node_index, &
                 end_node_index
+            call check_read_status(read_stat, 'bars.dat')
 
             structure%bars(id)%material => structure%materials(material_index)
             structure%bars(id)%section => structure%sections(section_index)
@@ -307,9 +339,10 @@ contains
         call open_data_file('nodes_supports', file_unit)
 
         ! Read ************************************************************************************
-        read(file_unit, *) ! titles line
+        read(file_unit, *, ioStat=read_stat) ! titles line
+        call check_read_status(read_stat, 'nodes_supports.dat')
         do id = 1, structure%qtd_nodes_support
-            read(file_unit, *) &
+            read(file_unit, *, ioStat=read_stat) &
                 node_index, &
                 structure%node_supports(id)%Dx, &
                 structure%node_supports(id)%Dy, &
@@ -317,6 +350,7 @@ contains
                 structure%node_supports(id)%Dx_value, &
                 structure%node_supports(id)%Dy_value, &
                 structure%node_supports(id)%Rz_value
+            call check_read_status(read_stat, 'nodes_supports.dat')
 
             structure%node_supports(id)%node => structure%nodes(node_index)
             structure%node_supports(id)%id = id
@@ -337,13 +371,15 @@ contains
         call open_data_file('node_loads', file_unit)
 
         ! Read ************************************************************************************
-        read(file_unit, *) ! titles line
+        read(file_unit, *, ioStat=read_stat) ! titles line
+        call check_read_status(read_stat, 'node_loads.dat')
         do id = 1, structure%qtd_node_loads
-            read(file_unit, *) &
+            read(file_unit, *, ioStat=read_stat) &
                 node_index, &
                 structure%node_loads(id)%Fx, &
                 structure%node_loads(id)%Fy, &
                 structure%node_loads(id)%Mz
+            call check_read_status(read_stat, 'node_loads.dat')
 
             structure%node_loads(id)%node => structure%nodes(node_index)
             structure%node_loads(id)%id = id
@@ -354,6 +390,7 @@ contains
 
         structure%global_dimension = structure%qtd_nodes * structure%dof_per_node
     end subroutine get_structure_data
+
 
     subroutine save_results(structure, results)
         ! =========================================================================================
