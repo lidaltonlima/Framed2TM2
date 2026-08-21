@@ -192,7 +192,7 @@ contains
         ! =====================================================================
         ! Open ****************************************************************
         file_name = 'controls'
-        file_path = folder_path // '/' // trim(file_name) // file_extension
+        file_path = folder_path // trim(file_name) // file_extension
         call open_data_file(file_path, file_unit)
 
         ! Read ****************************************************************
@@ -225,7 +225,7 @@ contains
         ! =====================================================================
         ! Get file path *******************************************************
         file_name = 'materials'
-        file_path = folder_path // '/' // trim(file_name) // file_extension
+        file_path = folder_path // trim(file_name) // file_extension
 
         ! Get number of lines *************************************************
         structure%num_materials = count_file_lines(file_path) - 1
@@ -257,7 +257,7 @@ contains
         ! =====================================================================
         ! Get file path *******************************************************
         file_name = 'sections'
-        file_path = folder_path // '/' // trim(file_name) // file_extension
+        file_path = folder_path // trim(file_name) // file_extension
 
         ! Get number of lines ************************************************
         structure%num_sections = count_file_lines(file_path) - 1
@@ -301,7 +301,7 @@ contains
         ! =====================================================================
         ! Get file path *******************************************************
         file_name = 'nodes'
-        file_path = folder_path // '/' // trim(file_name) // file_extension
+        file_path = folder_path // trim(file_name) // file_extension
 
         ! Get number of lines *************************************************
         structure%qtd_nodes = count_file_lines(file_path) - 1
@@ -331,7 +331,7 @@ contains
         ! =====================================================================
         ! Get file path *******************************************************
         file_name = 'bars'
-        file_path = folder_path // '/' // trim(file_name) // file_extension
+        file_path = folder_path // trim(file_name) // file_extension
 
         ! Get number of lines *************************************************
         structure%num_bars = count_file_lines(file_path) - 1
@@ -368,7 +368,7 @@ contains
         ! =====================================================================
         ! Get file path *******************************************************
         file_name = 'nodes_supports'
-        file_path = folder_path // '/' // trim(file_name) // file_extension
+        file_path = folder_path // trim(file_name) // file_extension
 
         ! Get number of lines *************************************************
         structure%qtd_nodes_support = count_file_lines(file_path) - 1
@@ -405,7 +405,7 @@ contains
         ! =====================================================================
         ! Get file path *******************************************************
         file_name = 'node_loads'
-        file_path = folder_path // '/' // trim(file_name) // file_extension
+        file_path = folder_path // trim(file_name) // file_extension
 
         ! Get number of lines *************************************************
         structure%num_node_loads = count_file_lines(file_path) - 1
@@ -470,7 +470,7 @@ contains
         end if
 
         file_name = 'results'
-        file_path = folder_path // '/' // trim(file_name) // file_extension
+        file_path = folder_path // trim(file_name) // file_extension
         call save_data_file(file_path, file_unit)
 
         ! =====================================================================

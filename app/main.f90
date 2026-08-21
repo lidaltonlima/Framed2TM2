@@ -18,7 +18,7 @@ program main
     ! Initialization
     ! =========================================================================
     ! Get data from files
-    call get_structure_data(structure, './data', '.dat')
+    call get_structure_data(structure, './data/', '.dat')
 
     ! =========================================================================
     ! Process
@@ -26,5 +26,9 @@ program main
     allocate(static_analysis_results)
     call static_analysis_solver_exec(structure, static_analysis_results)
 
-    call save_results(structure, static_analysis_results, './data/res', '.dat')
+    call save_results( &
+        structure, &
+        static_analysis_results, &
+        './data/res/', &
+        '.dat')
 end program
