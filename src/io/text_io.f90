@@ -1,5 +1,6 @@
 module text_io
     use iso_fortran_env, only: ioStat_end, real64
+
     use structural_model, only: StructuralModel
     use static_analysis_results, only: StaticAnalysisResults
     use precision, only: disp_tolerance, force_tolerance
@@ -9,151 +10,142 @@ module text_io
     public get_structure_data
     public count_file_lines
     public save_results
+    public check_read_status
+    public open_data_file
+
 contains
-    subroutine check_read_status(read_stat, file_name)
+    subroutine check_read_status(file_path, io_stat, io_msg)
         !! Check the read status. If error stop the program and show error.
-
-        integer, intent(in) :: read_stat
-        character(*), intent(in) :: file_name
-
-        if (read_stat /= 0) then
-            write(*, '(A, A, A, I0)') &
-                'Error reading ', trim(file_name), ', IO_STAT=', read_stat
-            error stop 'File read'
-        end if
-    end subroutine check_read_status
-
-
-    subroutine open_data_file(file_name,  file_unit)
-        ! Open the file to get data
 
         ! =====================================================================
         ! Vars statement
         ! =====================================================================
         ! I/O *****************************************************************
-        character(*), intent(in) :: file_name  !< File name
-        integer, intent(out) :: file_unit  !< Unit to file
+        !> ioStat returned int read function
+        integer, intent(in) :: io_stat
 
-        ! Parameters **********************************************************
-        !> Data file location
-        character(7), parameter :: data_folder = './data/'
+        !> File name
+        character(*), intent(in) :: file_path
 
-        !> Data file extension
-        character(4), parameter :: file_extension = '.dat'
+        !> ioMsg returned in read function
+        character(*), intent(in) :: io_msg
+
+        ! =====================================================================
+        ! Process
+        ! =====================================================================
+        if (io_stat /= 0) then
+            write(*, '(*(A))') 'Error reading: ', trim(file_path)
+            write(*, '(A, I0)') 'STATUS: ', io_stat
+            write(*, '(*(A))') 'MSG: ', trim(io_msg)
+
+            error stop 'File read'
+        end if
+    end subroutine
+
+
+    subroutine open_data_file(file_path, file_unit)
+        !! Open the file to get data
+
+        ! =====================================================================
+        ! Vars statement
+        ! =====================================================================
+        ! I/O *****************************************************************
+        character(*), intent(in) :: file_path  !< File path
+        integer, intent(out) :: file_unit  !< File unit
 
         ! Aux *****************************************************************
-        integer :: file_stat  !< State of file
-        character(:), allocatable :: file_error  !< Message to file error
-        character(:), allocatable :: file_path  !< Complete path to file
+        integer :: io_stat  !< State of file
+        character(1024) :: io_msg  !< Message to file error
 
         ! =====================================================================
         ! Process
         ! =====================================================================
         ! Open ****************************************************************
-        file_path = data_folder // trim(file_name) // file_extension
         open(newUnit=file_unit, &
             file=file_path, &
             status='old', &
             action='read', &
-            ioStat=file_stat, &
-            ioMsg=file_error)
+            ioStat=io_stat, &
+            ioMsg=io_msg)
 
 
         ! Error ***************************************************************
-        if ( file_stat /= 0) then
-            print *, 'State: ', file_stat
-            print *, 'MSG: ', file_error
+        if ( io_stat /= 0) then
+            write(*, '(*(A))') 'Error opening: ', trim(file_path)
+            write(*, '(A, I0)') 'STATUS: ', io_stat
+            write(*, '(*(A))') 'MSG: ', trim(io_msg)
+
             error stop 'File open'
         end if
-    end subroutine open_data_file
+    end subroutine
 
 
-    subroutine save_data_file(file_name,  file_unit)
-        ! Save data in file
+    subroutine save_data_file(file_path,  file_unit)
+        !! Save data in file
 
         ! =====================================================================
         ! Vars statement
         ! =====================================================================
         ! I/O *****************************************************************
-        character(*), intent(in) :: file_name  !< File name
-        integer, intent(out) :: file_unit  !< Unit to file
+        character(*), intent(in) :: file_path  !< File path
+        integer, intent(out) :: file_unit  !< File unit
 
         ! Aux *****************************************************************
-        !> Data file location
-        character(11), parameter :: data_folder = './data/res/'
-
-        !> Data file extension
-        character(4), parameter :: file_extension = '.dat'
-
-        integer :: file_stat  !< State of file
-        character(30) :: file_error  !< Message to file error
-        character(30) :: file_path  !< Complete path to file
+        integer :: io_stat  !< State of file
+        character(1024) :: io_msg  !< Message to file error
 
         ! =====================================================================
         ! Process
         ! =====================================================================
         ! Open ****************************************************************
-        file_path = data_folder // trim(file_name) // file_extension
         open(newUnit=file_unit, &
             file=file_path, &
-            status='replace', &
+            status='unknown', &
             action='write', &
-            ioStat=file_stat, &
-            ioMsg=file_error)
+            ioStat=io_stat, &
+            ioMsg=io_msg)
 
 
         ! Error ***************************************************************
-        if ( file_stat /= 0) then
-            print *, 'State: ', file_stat
-            print *, 'MSG: ', file_error
-            error stop 'File open'
+        if ( io_stat /= 0) then
+            write(*, '(*(A))') 'Error saving: ', trim(file_path)
+            write(*, '(A, I0)') 'STATUS: ', io_stat
+            write(*, '(*(A))') 'MSG: ', trim(io_msg)
+
+            error stop 'File save'
         end if
     end subroutine save_data_file
 
 
-    function count_file_lines(file_name) result(line_count)
+    function count_file_lines(file_path) result(line_count)
         !! Count how many lines a data file has
 
         ! =====================================================================
         ! Vars statement
         ! =====================================================================
-        ! I/O
-        character(*), intent(in) :: file_name  !< File name
+        ! I/O *****************************************************************
+        character(*), intent(in) :: file_path  !< File name
         integer :: line_count  !< Amount of written lines
 
-        ! aux
+        ! aux *****************************************************************
         integer :: file_unit  !< Unit to file
-        integer :: read_stat  !< State of current read
-        character(1024) :: line  ! Current read line
-        character(:), allocatable :: file_path  ! Complete path to file
-        character(:), allocatable :: file_error
+        integer :: io_stat  !< State of current read
+        character(1024) :: line  !< Current read line
+        character(1024) :: io_msg  !< Error message
 
         ! =====================================================================
         ! Process
         ! =====================================================================
         ! Open ****************************************************************
-        file_path = trim(file_name)
-        if (index(file_name, '/') > 0 .or. index(file_name, '\\') > 0) then
-            open(newUnit=file_unit, file=file_path, status='old', action='read', &
-                ioStat=read_stat, ioMsg=file_error)
-            if (read_stat /= 0) then
-                write(*, '(A, A, A, I0, A, A)') &
-                    'Error opening ', trim(file_path), &
-                    ', IO_STAT=', read_stat, &
-                    ', IO_MSG=', file_error
-                error stop 'File open'
-            end if
-        else
-            call open_data_file(file_name, file_unit)
-        end if
+        call open_data_file(file_path, file_unit)
 
         ! Read ****************************************************************
         line_count = 0
         do
-            read(file_unit, '(A)', ioStat=read_stat) line
+            read(file_unit, '(A)', ioStat=io_stat, ioMsg=io_msg) line
 
-            if (read_stat == ioStat_end) exit
-            call check_read_status(read_stat, file_path)
+            if (io_stat == ioStat_end) exit
+            call check_read_status(file_path, io_stat, io_msg)
 
             line_count = line_count + 1
         end do
@@ -163,7 +155,7 @@ contains
     end function count_file_lines
 
 
-    subroutine get_structure_data(structure)
+    subroutine get_structure_data(structure, folder_path, file_extension)
         ! Get the data structure
 
         ! =====================================================================
@@ -171,32 +163,43 @@ contains
         ! =====================================================================
         ! IO ******************************************************************
         type(StructuralModel), intent(out), target :: structure
+        character(*) :: folder_path
+        character(*) :: file_extension
 
-        ! Controls ************************************************************
-        integer :: file_unit  !< Unit to file
-        integer :: read_stat  !< State of current read
-        integer :: id  !< Object ID
-        character(20) :: line_label
-
-        ! Temp ****************************************************************
-        integer :: temp_int
+        ! Aux *****************************************************************
         integer :: material_index  !< Index of material of current bar
         integer :: section_index  !< Index of section of current bar
         integer :: start_node_index  !< Index of start node of current bar
         integer :: end_node_index  !< Index of end node of current bar
         integer :: node_index  !< Index of node of current support/load
 
+        ! File ****************************************************************
+        character(1024) :: file_path
+        character(1024) :: file_name
+        integer :: file_unit  !< Unit to file
+        integer :: io_stat  !< State of current read
+        character(20) :: line_label
+        character(1024) :: io_msg  !< Error message
+
+        ! Controls ************************************************************
+        integer :: id  !< Object ID
+
+        ! Temp ****************************************************************
+        integer :: temp_int
+
         ! =====================================================================
         ! CONTROLS
         ! =====================================================================
         ! Open ****************************************************************
-        call open_data_file('controls', file_unit)
+        file_name = 'controls'
+        file_path = folder_path // '/' // trim(file_name) // file_extension
+        call open_data_file(file_path, file_unit)
 
         ! Read ****************************************************************
         CONTROLS: do
-            read(file_unit, *, ioStat=read_stat) line_label, temp_int
+            read(file_unit, *, ioStat=io_stat, ioMsg=io_msg) line_label, temp_int
 
-            if (read_stat == 0) then
+            if (io_stat == 0) then
                 select case (line_label)
                     case ('ndofn')
                         structure%dof_per_node = temp_int
@@ -207,11 +210,10 @@ contains
                             structure%theory = 'TM'
                         end if
                 end select
-            else if (read_stat == ioStat_end) then
+            else if (io_stat == ioStat_end) then
                 exit CONTROLS
             else
-                write(*, *) 'Read stat:', read_stat
-                error stop 'Error in CONTROLS read'
+                call check_read_status(file_path, io_stat, io_msg)
             end if
         end do CONTROLS
 
@@ -221,24 +223,29 @@ contains
         ! =====================================================================
         ! MATERIALS
         ! =====================================================================
-        structure%qtd_materials = count_file_lines('materials') - 1
+        ! Get file path *******************************************************
+        file_name = 'materials'
+        file_path = folder_path // '/' // trim(file_name) // file_extension
+
+        ! Get number of lines *************************************************
+        structure%qtd_materials = count_file_lines(file_path) - 1
 
         ! Allocation **********************************************************
         allocate(structure%materials(structure%qtd_materials))
 
         ! Open ****************************************************************
-        call open_data_file('materials', file_unit)
+        call open_data_file(file_path, file_unit)
 
         ! Read ****************************************************************
-        read(file_unit, *, ioStat=read_stat) ! titles line
-        call check_read_status(read_stat, 'materials.dat')
+        read(file_unit, *, ioStat=io_stat, ioMsg=io_msg) ! titles line
+        call check_read_status(file_path, io_stat, io_msg)
         do id = 1, structure%qtd_materials
-            read(file_unit, *, ioStat=read_stat) &
+            read(file_unit, *, ioStat=io_stat, ioMsg=io_msg) &
                 structure%materials(id)%long_elasticity, &
                 structure%materials(id)%trans_elasticity, &
                 structure%materials(id)%poison_ratio, &
                 structure%materials(id)%density
-            call check_read_status(read_stat, 'materials.dat')
+            call check_read_status(file_path, io_stat, io_msg)
             structure%materials(id)%id = id
         end do
 
@@ -248,21 +255,26 @@ contains
         ! =====================================================================
         ! SECTIONS
         ! =====================================================================
-        structure%qtd_sections = count_file_lines('sections') - 1
+        ! Get file path *******************************************************
+        file_name = 'sections'
+        file_path = folder_path // '/' // trim(file_name) // file_extension
+
+        ! Get number of lines ************************************************
+        structure%qtd_sections = count_file_lines(file_path) - 1
 
         ! Allocation **********************************************************
         allocate(structure%sections(structure%qtd_sections))
 
         ! Open ****************************************************************
-        call open_data_file('sections', file_unit)
+        call open_data_file(file_path, file_unit)
 
         ! Read ****************************************************************
-        read(file_unit, *, ioStat=read_stat) ! titles line
-        call check_read_status(read_stat, 'sections.dat')
+        read(file_unit, *, ioStat=io_stat, ioMsg=io_msg) ! titles line
+        call check_read_status(file_path, io_stat, io_msg)
         do id = 1, structure%qtd_sections
             ! Internal allocation ---------------------------------------------
-            read(file_unit, *, ioStat=read_stat) structure%sections(id)%samples
-            call check_read_status(read_stat, 'sections.dat')
+            read(file_unit, *, ioStat=io_stat, ioMsg=io_msg) structure%sections(id)%samples
+            call check_read_status(file_path, io_stat, io_msg)
             allocate(structure%sections(id)%area( &
                 structure%sections(id)%samples))
             allocate(structure%sections(id)%shear_area_y( &
@@ -272,12 +284,12 @@ contains
             backspace file_unit
 
             ! Read data -------------------------------------------------------
-            read(file_unit, *, ioStat=read_stat) &
+            read(file_unit, *, ioStat=io_stat, ioMsg=io_msg) &
                 structure%sections(id)%samples, &
                 structure%sections(id)%area(:), &
                 structure%sections(id)%shear_area_y(:), &
                 structure%sections(id)%inertia_z(:)
-            call check_read_status(read_stat, 'sections.dat')
+            call check_read_status(file_path, io_stat, io_msg)
             structure%sections(id)%id = id
         end do
 
@@ -287,22 +299,27 @@ contains
         ! =====================================================================
         ! NODES
         ! =====================================================================
-        structure%qtd_nodes = count_file_lines('nodes') - 1
+        ! Get file path *******************************************************
+        file_name = 'nodes'
+        file_path = folder_path // '/' // trim(file_name) // file_extension
+
+        ! Get number of lines *************************************************
+        structure%qtd_nodes = count_file_lines(file_path) - 1
 
         ! Allocation **********************************************************
         allocate(structure%nodes(structure%qtd_nodes))
 
         ! Open ****************************************************************
-        call open_data_file('nodes', file_unit)
+        call open_data_file(file_path, file_unit)
 
         ! Read ****************************************************************
-        read(file_unit, *, ioStat=read_stat) ! titles line
-        call check_read_status(read_stat, 'nodes.dat')
+        read(file_unit, *, ioStat=io_stat, ioMsg=io_msg) ! titles line
+        call check_read_status(file_path, io_stat, io_msg)
         do id = 1, structure%qtd_nodes
-            read(file_unit, *, ioStat=read_stat) &
+            read(file_unit, *, ioStat=io_stat, ioMsg=io_msg) &
                 structure%nodes(id)%x, &
                 structure%nodes(id)%y
-            call check_read_status(read_stat, 'nodes.dat')
+            call check_read_status(file_path, io_stat, io_msg)
             structure%nodes(id)%id = id
         end do
 
@@ -312,24 +329,29 @@ contains
         ! =====================================================================
         ! BARS
         ! =====================================================================
-        structure%qtd_bars = count_file_lines('bars') - 1
+        ! Get file path *******************************************************
+        file_name = 'bars'
+        file_path = folder_path // '/' // trim(file_name) // file_extension
+
+        ! Get number of lines *************************************************
+        structure%qtd_bars = count_file_lines(file_path) - 1
 
         ! Allocation **********************************************************
         allocate(structure%bars(structure%qtd_bars))
 
         ! Open ****************************************************************
-        call open_data_file('bars', file_unit)
+        call open_data_file(file_path, file_unit)
 
         ! Read ****************************************************************
-        read(file_unit, *, ioStat=read_stat) ! titles line
-        call check_read_status(read_stat, 'bars.dat')
+        read(file_unit, *, ioStat=io_stat, ioMsg=io_msg) ! titles line
+        call check_read_status(file_path, io_stat, io_msg)
         do id = 1, structure%qtd_bars
-            read(file_unit, *, ioStat=read_stat) &
+            read(file_unit, *, ioStat=io_stat, ioMsg=io_msg) &
                 material_index, &
                 section_index, &
                 start_node_index, &
                 end_node_index
-            call check_read_status(read_stat, 'bars.dat')
+            call check_read_status(file_path, io_stat, io_msg)
 
             structure%bars(id)%material => structure%materials(material_index)
             structure%bars(id)%section => structure%sections(section_index)
@@ -344,19 +366,24 @@ contains
         ! =====================================================================
         ! Bound
         ! =====================================================================
-        structure%qtd_nodes_support = count_file_lines('nodes_supports') - 1
+        ! Get file path *******************************************************
+        file_name = 'nodes_supports'
+        file_path = folder_path // '/' // trim(file_name) // file_extension
+
+        ! Get number of lines *************************************************
+        structure%qtd_nodes_support = count_file_lines(file_path) - 1
 
         ! Allocation **********************************************************
         allocate(structure%node_supports(structure%qtd_nodes_support))
 
         ! Open ****************************************************************
-        call open_data_file('nodes_supports', file_unit)
+        call open_data_file(file_path, file_unit)
 
         ! Read ****************************************************************
-        read(file_unit, *, ioStat=read_stat) ! titles line
-        call check_read_status(read_stat, 'nodes_supports.dat')
+        read(file_unit, *, ioStat=io_stat, ioMsg=io_msg) ! titles line
+        call check_read_status(file_path, io_stat, io_msg)
         do id = 1, structure%qtd_nodes_support
-            read(file_unit, *, ioStat=read_stat) &
+            read(file_unit, *, ioStat=io_stat, ioMsg=io_msg) &
                 node_index, &
                 structure%node_supports(id)%Dx, &
                 structure%node_supports(id)%Dy, &
@@ -364,7 +391,7 @@ contains
                 structure%node_supports(id)%Dx_value, &
                 structure%node_supports(id)%Dy_value, &
                 structure%node_supports(id)%Rz_value
-            call check_read_status(read_stat, 'nodes_supports.dat')
+            call check_read_status(file_path, io_stat, io_msg)
 
             structure%node_supports(id)%node => structure%nodes(node_index)
             structure%node_supports(id)%id = id
@@ -376,24 +403,29 @@ contains
         ! =====================================================================
         ! Loads
         ! =====================================================================
-        structure%qtd_node_loads = count_file_lines('node_loads') - 1
+        ! Get file path *******************************************************
+        file_name = 'node_loads'
+        file_path = folder_path // '/' // trim(file_name) // file_extension
+
+        ! Get number of lines *************************************************
+        structure%qtd_node_loads = count_file_lines(file_path) - 1
 
         ! Allocation **********************************************************
         allocate(structure%node_loads(structure%qtd_node_loads))
 
         ! Open ****************************************************************
-        call open_data_file('node_loads', file_unit)
+        call open_data_file(file_path, file_unit)
 
         ! Read ****************************************************************
-        read(file_unit, *, ioStat=read_stat) ! titles line
-        call check_read_status(read_stat, 'node_loads.dat')
+        read(file_unit, *, ioStat=io_stat, ioMsg=io_msg) ! titles line
+        call check_read_status(file_path, io_stat, io_msg)
         do id = 1, structure%qtd_node_loads
-            read(file_unit, *, ioStat=read_stat) &
+            read(file_unit, *, ioStat=io_stat, ioMsg=io_msg) &
                 node_index, &
                 structure%node_loads(id)%Fx, &
                 structure%node_loads(id)%Fy, &
                 structure%node_loads(id)%Mz
-            call check_read_status(read_stat, 'node_loads.dat')
+            call check_read_status(file_path, io_stat, io_msg)
 
             structure%node_loads(id)%node => structure%nodes(node_index)
             structure%node_loads(id)%id = id
@@ -406,16 +438,20 @@ contains
     end subroutine get_structure_data
 
 
-    subroutine save_results(structure, results)
+    subroutine save_results(structure, results, folder_path, file_extension)
         ! =====================================================================
         ! Vars statement
         ! =====================================================================
         ! I/O *****************************************************************
         type(StructuralModel), intent(in) :: structure
         type(StaticAnalysisResults), intent(in) :: results
+        character(*) :: folder_path
+        character(*) :: file_extension
 
         ! File ****************************************************************
         integer :: file_unit  ! Unit to file
+        character(1024) :: file_name
+        character(1024) :: file_path
 
         ! Aux *****************************************************************
         character(10) :: int2str1
@@ -433,7 +469,9 @@ contains
             samples = 0
         end if
 
-        call save_data_file('results', file_unit)
+        file_name = 'results'
+        file_path = folder_path // '/' // trim(file_name) // file_extension
+        call save_data_file(file_path, file_unit)
 
         ! =====================================================================
         ! Processes
