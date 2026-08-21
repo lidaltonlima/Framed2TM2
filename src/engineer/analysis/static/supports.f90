@@ -3,6 +3,7 @@ module solver_linear_supports
 
     use iso_fortran_env, only: real64
 
+    use dof_index_utils, only: dof_index
     use entity_node_support, only: NodeSupport
     use structural_model, only: StructuralModel
 
@@ -45,30 +46,27 @@ contains
             node_support = structure%node_supports(i)
 
             if (node_support%Dx) then
-                Dx_index = &
-                    (structure%dof_per_node * (node_support%node%id - 1)) + 1
-                global_stiffness_matrix(Dx_index, :) = 0d0
-                global_stiffness_matrix(:, Dx_index) = 0d0
-                global_stiffness_matrix(Dx_index, Dx_index) = 1d0
-                global_load_vector(Dx_index) = 0d0
+                Dx_index = dof_index(node_support%node%id, 1, structure%dof_per_node)
+                global_stiffness_matrix(Dx_index, :) = 0.0_real64
+                global_stiffness_matrix(:, Dx_index) = 0.0_real64
+                global_stiffness_matrix(Dx_index, Dx_index) = 1_real64
+                global_load_vector(Dx_index) = 0.0_real64
             end if
 
             if (node_support%Dy) then
-                Dy_index = &
-                    (structure%dof_per_node * (node_support%node%id - 1)) + 2
-                global_stiffness_matrix(Dy_index, :) = 0d0
-                global_stiffness_matrix(:, Dy_index) = 0d0
-                global_stiffness_matrix(Dy_index, Dy_index) = 1d0
-                global_load_vector(Dy_index) = 0d0
+                Dy_index = dof_index(node_support%node%id, 2, structure%dof_per_node)
+                global_stiffness_matrix(Dy_index, :) = 0.0_real64
+                global_stiffness_matrix(:, Dy_index) = 0.0_real64
+                global_stiffness_matrix(Dy_index, Dy_index) = 1_real64
+                global_load_vector(Dy_index) = 0.0_real64
             end if
 
             if (node_support%Rz) then
-                Rz_index = &
-                    (structure%dof_per_node * (node_support%node%id - 1)) + 3
-                global_stiffness_matrix(Rz_index, :) = 0d0
-                global_stiffness_matrix(:, Rz_index) = 0d0
-                global_stiffness_matrix(Rz_index, Rz_index) = 1d0
-                global_load_vector(Rz_index) = 0d0
+                Rz_index = dof_index(node_support%node%id, 3, structure%dof_per_node)
+                global_stiffness_matrix(Rz_index, :) = 0.0_real64
+                global_stiffness_matrix(:, Rz_index) = 0.0_real64
+                global_stiffness_matrix(Rz_index, Rz_index) = 1_real64
+                global_load_vector(Rz_index) = 0.0_real64
             end if
         end do
     end subroutine

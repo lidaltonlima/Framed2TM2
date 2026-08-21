@@ -77,22 +77,22 @@ contains
         ! Initialization
         ! =====================================================================
         allocate(R(dimension, dimension))
-        R = 0d0
+        R = 0.0_real64
 
         e_vec = [ &
             this%end_node%x - this%start_node%x, &
             this%end_node%y - this%start_node%y, &
-            0d0]
+            0.0_real64]
 
         if (e_vec(1) > 0) then
-            n_vec = [e_vec(1), e_vec(2) + 1, 0d0]
+            n_vec = [e_vec(1), e_vec(2) + 1, 0.0_real64]
         else if (e_vec(1) < 0) then
-            n_vec = [e_vec(1), e_vec(2) - 1, 0d0]
+            n_vec = [e_vec(1), e_vec(2) - 1, 0.0_real64]
         else
             if (e_vec(2) > 0) then
-                n_vec = [e_vec(1) - 1, e_vec(2), 0d0]
+                n_vec = [e_vec(1) - 1, e_vec(2), 0.0_real64]
             else
-                n_vec = [e_vec(1) + 1, e_vec(2), 0d0]
+                n_vec = [e_vec(1) + 1, e_vec(2), 0.0_real64]
             end if
         end if
 

@@ -18,13 +18,13 @@ contains
         allocate(el_px(samples), A(samples), As(samples), Iz(samples))
 
         theory_g = theory
-        kl = 0d0
-        AII = 0d0
-        AFF = 0d0
+        kl = 0.0_real64
+        AII = 0.0_real64
+        AFF = 0.0_real64
         E = this%material%long_elasticity
 
         G = this%material%trans_elasticity
-        if (G == 0d0) then
+        if (G == 0.0_real64) then
             nu = this%material%poison_ratio
             G = E / (2 * (1 + nu))
         end if
@@ -42,23 +42,23 @@ contains
             el_px(index) = step * (index - 1)
         end do
 
-        EII = 0d0
+        EII = 0.0_real64
         EII(1, 1) = 1
         EII(2, 2) = 1
         EII(3, 3) = 1
         EII(3, 2) = -L
 
-        AII(1, 1) = intGQ(0d0, L, a11, 4)
-        AII(2, 2) = intGQ(0d0, L, a22, 4)
-        AII(2, 3) = intGQ(0d0, L, a23, 4)
-        AII(3, 2) = intGQ(0d0, L, a32, 4)
-        AII(3, 3) = intGQ(0d0, L, a33, 4)
+        AII(1, 1) = intGQ(0.0_real64, L, a11, 4)
+        AII(2, 2) = intGQ(0.0_real64, L, a22, 4)
+        AII(2, 3) = intGQ(0.0_real64, L, a23, 4)
+        AII(3, 2) = intGQ(0.0_real64, L, a32, 4)
+        AII(3, 3) = intGQ(0.0_real64, L, a33, 4)
 
-        AFF(1, 1) = intGQ(0d0, L, a44, 4)
-        AFF(2, 2) = intGQ(0d0, L, a55, 4)
-        AFF(2, 3) = intGQ(0d0, L, a56, 4)
-        AFF(3, 2) = intGQ(0d0, L, a65, 4)
-        AFF(3, 3) = intGQ(0d0, L, a66, 4)
+        AFF(1, 1) = intGQ(0.0_real64, L, a44, 4)
+        AFF(2, 2) = intGQ(0.0_real64, L, a55, 4)
+        AFF(2, 3) = intGQ(0.0_real64, L, a56, 4)
+        AFF(3, 2) = intGQ(0.0_real64, L, a65, 4)
+        AFF(3, 3) = intGQ(0.0_real64, L, a66, 4)
 
         fIi = inv_special(AII)
         fFf = inv_special(AFF)
@@ -98,7 +98,7 @@ contains
         pure function a22(x) result(y)
             real(real64), intent(in) :: x
             real(real64) :: y
-            y = x**2 / kb(x) + merge(1 / ks(x), 0d0, theory_g == 'TM')
+            y = x**2 / kb(x) + merge(1 / ks(x), 0.0_real64, theory_g == 'TM')
         end function a22
 
         pure function a23(x) result(y)
@@ -128,7 +128,7 @@ contains
         pure function a55(x) result(y)
             real(real64), intent(in) :: x
             real(real64) :: y
-            y = (L - x)**2 / kb(x) + merge(1 / ks(x), 0d0, theory_g == 'TM')
+            y = (L - x)**2 / kb(x) + merge(1 / ks(x), 0.0_real64, theory_g == 'TM')
         end function a55
 
         pure function a56(x) result(y)

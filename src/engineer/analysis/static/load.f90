@@ -3,6 +3,7 @@ module solver_linear_load
 
     use iso_fortran_env, only: real64
 
+    use dof_index_utils, only: dof_index
     use entity_node_load, only: NodeLoad
     use entity_node_support, only: NodeSupport
 
@@ -51,13 +52,13 @@ contains
             allocate(results%load_vector(structure%global_dimension))
         end if
 
-        results%load_vector = 0d0
-        do i = 1, structure%qtd_node_loads
+        results%load_vector = 0.0_real64
+        do i = 1, structure%num_node_loads
             node_load = structure%node_loads(i)
 
-            Fx_index = (structure%dof_per_node * (node_load%node%id - 1)) + 1
-            Fy_index = (structure%dof_per_node * (node_load%node%id - 1)) + 2
-            Mz_index = (structure%dof_per_node * (node_load%node%id - 1)) + 3
+            Fx_index = dof_index(node_load%node%id, 1, structure%dof_per_node)
+            Fy_index = dof_index(node_load%node%id, 2, structure%dof_per_node)
+            Mz_index = dof_index(node_load%node%id, 3, structure%dof_per_node)
 
             results%load_vector(Fx_index) = &
                 results%load_vector(Fx_index) + node_load%Fx
@@ -67,25 +68,22 @@ contains
                 results%load_vector(Mz_index) + node_load%Mz
         end do
 
-        Dp = 0d0
+        Dp = 0.0_real64
         do i = 1, structure%qtd_nodes_support
             node_support = structure%node_supports(i)
 
             if (node_support%Dx) then
-                Dx_index = &
-                    (structure%dof_per_node * (node_support%node%id - 1)) + 1
+                Dx_index = dof_index(node_support%node%id, 1, structure%dof_per_node)
                 Dp(Dx_index) = node_support%Dx_value
             end if
 
             if (node_support%Dy) then
-                Dy_index = &
-                    (structure%dof_per_node * (node_support%node%id - 1)) + 2
+                Dy_index = dof_index(node_support%node%id, 2, structure%dof_per_node)
                 Dp(Dy_index) = node_support%Dy_value
             end if
 
             if (node_support%Rz) then
-                Rz_index = &
-                    (structure%dof_per_node * (node_support%node%id - 1)) + 3
+                Rz_index = dof_index(node_support%node%id, 3, structure%dof_per_node)
                 Dp(Rz_index) = node_support%Rz_value
             end if
         end do

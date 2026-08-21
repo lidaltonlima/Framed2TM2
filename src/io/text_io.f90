@@ -228,10 +228,10 @@ contains
         file_path = folder_path // '/' // trim(file_name) // file_extension
 
         ! Get number of lines *************************************************
-        structure%qtd_materials = count_file_lines(file_path) - 1
+        structure%num_materials = count_file_lines(file_path) - 1
 
         ! Allocation **********************************************************
-        allocate(structure%materials(structure%qtd_materials))
+        allocate(structure%materials(structure%num_materials))
 
         ! Open ****************************************************************
         call open_data_file(file_path, file_unit)
@@ -239,7 +239,7 @@ contains
         ! Read ****************************************************************
         read(file_unit, *, ioStat=io_stat, ioMsg=io_msg) ! titles line
         call check_read_status(file_path, io_stat, io_msg)
-        do id = 1, structure%qtd_materials
+        do id = 1, structure%num_materials
             read(file_unit, *, ioStat=io_stat, ioMsg=io_msg) &
                 structure%materials(id)%long_elasticity, &
                 structure%materials(id)%trans_elasticity, &
@@ -260,10 +260,10 @@ contains
         file_path = folder_path // '/' // trim(file_name) // file_extension
 
         ! Get number of lines ************************************************
-        structure%qtd_sections = count_file_lines(file_path) - 1
+        structure%num_sections = count_file_lines(file_path) - 1
 
         ! Allocation **********************************************************
-        allocate(structure%sections(structure%qtd_sections))
+        allocate(structure%sections(structure%num_sections))
 
         ! Open ****************************************************************
         call open_data_file(file_path, file_unit)
@@ -271,7 +271,7 @@ contains
         ! Read ****************************************************************
         read(file_unit, *, ioStat=io_stat, ioMsg=io_msg) ! titles line
         call check_read_status(file_path, io_stat, io_msg)
-        do id = 1, structure%qtd_sections
+        do id = 1, structure%num_sections
             ! Internal allocation ---------------------------------------------
             read(file_unit, *, ioStat=io_stat, ioMsg=io_msg) structure%sections(id)%samples
             call check_read_status(file_path, io_stat, io_msg)
@@ -334,10 +334,10 @@ contains
         file_path = folder_path // '/' // trim(file_name) // file_extension
 
         ! Get number of lines *************************************************
-        structure%qtd_bars = count_file_lines(file_path) - 1
+        structure%num_bars = count_file_lines(file_path) - 1
 
         ! Allocation **********************************************************
-        allocate(structure%bars(structure%qtd_bars))
+        allocate(structure%bars(structure%num_bars))
 
         ! Open ****************************************************************
         call open_data_file(file_path, file_unit)
@@ -345,7 +345,7 @@ contains
         ! Read ****************************************************************
         read(file_unit, *, ioStat=io_stat, ioMsg=io_msg) ! titles line
         call check_read_status(file_path, io_stat, io_msg)
-        do id = 1, structure%qtd_bars
+        do id = 1, structure%num_bars
             read(file_unit, *, ioStat=io_stat, ioMsg=io_msg) &
                 material_index, &
                 section_index, &
@@ -408,10 +408,10 @@ contains
         file_path = folder_path // '/' // trim(file_name) // file_extension
 
         ! Get number of lines *************************************************
-        structure%qtd_node_loads = count_file_lines(file_path) - 1
+        structure%num_node_loads = count_file_lines(file_path) - 1
 
         ! Allocation **********************************************************
-        allocate(structure%node_loads(structure%qtd_node_loads))
+        allocate(structure%node_loads(structure%num_node_loads))
 
         ! Open ****************************************************************
         call open_data_file(file_path, file_unit)
@@ -419,7 +419,7 @@ contains
         ! Read ****************************************************************
         read(file_unit, *, ioStat=io_stat, ioMsg=io_msg) ! titles line
         call check_read_status(file_path, io_stat, io_msg)
-        do id = 1, structure%qtd_node_loads
+        do id = 1, structure%num_node_loads
             read(file_unit, *, ioStat=io_stat, ioMsg=io_msg) &
                 node_index, &
                 structure%node_loads(id)%Fx, &
@@ -463,7 +463,7 @@ contains
         real(real64), allocatable :: element_reactions(:)
         real(real64), allocatable :: element_efforts(:)
 
-        if (structure%qtd_sections > 0) then
+        if (structure%num_sections > 0) then
             samples = structure%sections(1)%samples
         else
             samples = 0
@@ -497,12 +497,12 @@ contains
         write(file_unit, *)
 
         write(file_unit, 100) 'nno', structure%qtd_nodes
-        write(file_unit, 100) 'nel', structure%qtd_bars
+        write(file_unit, 100) 'nel', structure%num_bars
         write(file_unit, 100) 'ndofn', structure%dof_per_node
-        write(file_unit, 100) 'nmat', structure%qtd_materials
-        write(file_unit, 100) 'nsec', structure%qtd_sections
+        write(file_unit, 100) 'nmat', structure%num_materials
+        write(file_unit, 100) 'nsec', structure%num_sections
         write(file_unit, 100) 'nccdesl', structure%qtd_nodes_support
-        write(file_unit, 100) 'nnc', structure%qtd_node_loads
+        write(file_unit, 100) 'nnc', structure%num_node_loads
         write(file_unit, 100) 'nsa', samples
         write(file_unit, '(1A6, ":", 1A10)') 'theory', structure%theory
         write(file_unit, *)
@@ -516,7 +516,7 @@ contains
         write(file_unit, *)
 
         write(file_unit, '(1A4, 3A15)') 'Id', 'E', 'nu', 'rho'
-        do i = 1, structure%qtd_materials
+        do i = 1, structure%num_materials
             write(file_unit, '(1I4, 1ES15.4, 2F15.4)') &
                 structure%materials(i)%id, &
                 structure%materials(i)%long_elasticity, &
@@ -539,7 +539,7 @@ contains
             '(1A4, T7, 1A4, T' // int2str1 // ', 1A10, T' // int2str2 // ', 1A10)') &
             'Id','Area', 'Shear Area', 'Inertia'
         write(int2str1, '(I0)') samples*3
-        do i = 1, structure%qtd_sections
+        do i = 1, structure%num_sections
 
             write(file_unit, &
                 '(1I4,' // int2str1 // 'ES10.2)')&
@@ -574,7 +574,7 @@ contains
         write(file_unit, *)
 
         write(file_unit, '(1A4, 4A15)') 'id', 'Material', 'Section', 'Start Node', 'End Node'
-        do i = 1, structure%qtd_bars
+        do i = 1, structure%num_bars
             write(file_unit, '(1I4, 4I15)') &
                 structure%bars(i)%id, &
                 structure%bars(i)%material%id, &
@@ -617,7 +617,7 @@ contains
         write(file_unit, *)
 
         write(file_unit, '(1A4, 1A7, *(A13))') 'Id', 'node', 'Fx', 'Fy', 'Mz'
-        do i = 1, structure%qtd_node_loads
+        do i = 1, structure%num_node_loads
             write(file_unit, '(1I4, 1I7, 3ES13.4)') &
                 structure%node_loads(i)%id, &
                 structure%node_loads(i)%node%id, &
@@ -637,7 +637,7 @@ contains
 
         write(file_unit, '(1A7, *(A15))') &
             'Element', 'RNxi', 'RNyi', 'RMzi', 'RNxj', 'RNyj', 'RMzj'
-        do i = 1, structure%qtd_bars
+        do i = 1, structure%num_bars
             element_reactions = structure%bars(i)%reactions( &
                 structure%dof_per_node, &
                 structure%theory, &
@@ -645,7 +645,7 @@ contains
             write(file_unit, '(1I7)', advance='no') structure%bars(i)%id
             do dir = 1, size(element_reactions)
                 if (abs(element_reactions(dir)) < force_tolerance) then
-                    write(file_unit, '(*(ES15.4))', advance='no') 0.0d0
+                    write(file_unit, '(*(ES15.4))', advance='no') 0.0_real64
                 else
                     write(file_unit, '(*(ES15.4))', advance='no')&
                         element_reactions(dir)
@@ -664,13 +664,13 @@ contains
         write(file_unit, *)
 
         write(file_unit, '(1A7, *(A15))') 'Element', 'Ni', 'Vi', 'Mi', 'Nf', 'Vf', 'Mf'
-        do i = 1, structure%qtd_bars
+        do i = 1, structure%num_bars
             element_efforts = structure%bars(i)%forces( &
                 structure%dof_per_node, structure%theory, results%displacements)
             write(file_unit, '(1I7)', advance='no') structure%bars(i)%id
             do dir = 1, size(element_efforts)
                 if (abs(element_efforts(dir)) < force_tolerance) then
-                    write(file_unit, '(*(ES15.4))', advance='no') 0.0d0
+                    write(file_unit, '(*(ES15.4))', advance='no') 0.0_real64
                 else
                     write(file_unit, '(*(ES15.4))', advance='no') element_efforts(dir)
                 end if
@@ -695,7 +695,7 @@ contains
             do dir = 1, structure%dof_per_node
                 i_dir = (structure%dof_per_node * (i - 1)) + dir
                 if (abs(results%displacements(i_dir)) < disp_tolerance) then
-                    write(file_unit, '(ES13.4)', advance='no') 0.0d0
+                    write(file_unit, '(ES13.4)', advance='no') 0.0_real64
                 else
                     write(file_unit, '(ES13.4)', advance='no') &
                         results%displacements(i_dir)
@@ -721,7 +721,7 @@ contains
                 i_dir = (structure%dof_per_node * (structure%node_supports(i)%node%id - 1)) + dir
 
                 if (abs(results%reactions(i_dir)) < force_tolerance) then
-                    write(file_unit, '(ES13.4)', advance='no') 0.0d0
+                    write(file_unit, '(ES13.4)', advance='no') 0.0_real64
                 else
                     write(file_unit, '(ES13.4)', advance='no') &
                         results%reactions(i_dir)

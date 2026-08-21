@@ -91,9 +91,9 @@ contains
                 structure%global_dimension, &
                 structure%global_dimension))
         end if
-        results%stiffness_matrix = 0d0
+        results%stiffness_matrix = 0.0_real64
 
-        do id = 1, structure%qtd_bars
+        do id = 1, structure%num_bars
             call add_k(structure, results%stiffness_matrix, id)
         end do
     end subroutine

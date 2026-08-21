@@ -45,12 +45,12 @@ module structural_model
         !< Quantity of nodes with prescribed amount of displacement
         integer :: qtd_nodes_support
 
-        integer :: qtd_nodes_with_loads  !< Quantity of nodes
-        integer :: qtd_bars  !< Quantity of elements
+        integer :: num_nodes_with_loads  !< Quantity of nodes
+        integer :: num_bars  !< Quantity of elements
         integer :: dof_per_node  !< Degrees of freedom per node
-        integer :: qtd_materials  !< Quantity of materials
-        integer :: qtd_sections  !< Quantity of sections
-        integer :: qtd_node_loads  !< Quantity of nodes with point load
+        integer :: num_materials  !< Quantity of materials
+        integer :: num_sections  !< Quantity of sections
+        integer :: num_node_loads  !< Quantity of nodes with point load
 
         !> Theory used (EB: Euler-Bernoulli or TM: Timoshenko)
         character(2) :: theory

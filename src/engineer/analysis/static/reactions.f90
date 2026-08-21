@@ -3,6 +3,7 @@ module solver_linear_reactions
 
     use iso_fortran_env, only: real64
 
+    use dof_index_utils, only: dof_index
     use entity_node_support, only: NodeSupport
 
     use static_analysis_results, only: StaticAnalysisResults
@@ -48,20 +49,17 @@ contains
             node_support = structure%node_supports(i)
 
             if (node_support%Dx) then
-                Dx_index = &
-                    (structure%dof_per_node * (node_support%node%id - 1)) + 1
+                Dx_index = dof_index(node_support%node%id, 1, structure%dof_per_node)
                 D_aux(Dx_index) = D_aux(Dx_index) - (node_support%Dx_value)
             end if
 
             if (node_support%Dy) then
-                Dy_index = &
-                    (structure%dof_per_node * (node_support%node%id - 1)) + 2
+                Dy_index = dof_index(node_support%node%id, 2, structure%dof_per_node)
                 D_aux(Dy_index) = D_aux(Dy_index) - (node_support%Dy_value)
             end if
 
             if (node_support%Rz) then
-                Rz_index = &
-                    (structure%dof_per_node * (node_support%node%id - 1)) + 3
+                Rz_index = dof_index(node_support%node%id, 3, structure%dof_per_node)
                 D_aux(Rz_index) = D_aux(Rz_index) - (node_support%Rz_value)
             end if
         end do
@@ -70,8 +68,7 @@ contains
             node_support = structure%node_supports(i)
 
             if (node_support%Dx) then
-                Dx_index = &
-                    (structure%dof_per_node * (node_support%node%id - 1)) + 1
+                Dx_index = dof_index(node_support%node%id, 1, structure%dof_per_node)
 
                 results%reactions(Dx_index) = &
                     results%reactions(Dx_index) - results%load_vector(Dx_index)
@@ -84,8 +81,7 @@ contains
             end if
 
             if (node_support%Dy) then
-                Dy_index = &
-                    (structure%dof_per_node * (node_support%node%id - 1)) + 2
+                Dy_index = dof_index(node_support%node%id, 2, structure%dof_per_node)
 
                 results%reactions(Dy_index) = &
                     results%reactions(Dy_index) - results%load_vector(Dy_index)
@@ -98,8 +94,7 @@ contains
             end if
 
             if (node_support%Rz) then
-                Rz_index = &
-                    (structure%dof_per_node * (node_support%node%id - 1)) + 3
+                Rz_index = dof_index(node_support%node%id, 3, structure%dof_per_node)
 
                 results%reactions(Rz_index) = &
                     results%reactions(Rz_index) - results%load_vector(Rz_index)
