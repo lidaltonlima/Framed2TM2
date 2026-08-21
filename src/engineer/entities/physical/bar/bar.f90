@@ -60,22 +60,22 @@ contains
 
 
     function rotation_matrix(this) result(R)
-        ! =========================================================================================
+        ! =====================================================================
         ! Vars statement
-        ! =========================================================================================
+        ! =====================================================================
         class(Bar) :: this
         real(real64), allocatable :: R(:, :)
 
-        ! Aux *************************************************************************************
+        ! Aux *****************************************************************
         real(real64) :: e_vec(3)
         real(real64) :: n_vec(3)
         real(real64) :: x_vec(3)
         real(real64) :: y_vec(3)
         real(real64) :: z_vec(3)
 
-        ! =========================================================================================
+        ! =====================================================================
         ! Initialization
-        ! =========================================================================================
+        ! =====================================================================
         allocate(R(dimension, dimension))
         R = 0d0
 
@@ -115,16 +115,16 @@ contains
     function reactions(this, dof_per_node, theory, global_displacements) result(ERl)
         !! Calculate the reactions of the bar in its local system from the global displacements
 
-        ! =========================================================================================
+        ! =====================================================================
         ! Vars statement
-        ! =========================================================================================
+        ! =====================================================================
         class(Bar) :: this
         integer, intent(in) :: dof_per_node  !< Degrees of freedom per node
         character(2), intent(in) :: theory  !< Theory used (Euler-Bernoulli or Timoshenko)
         real(real64), intent(in) :: global_displacements(:)  !< Displacements in global system
         real(real64), allocatable :: ERl(:)  !> The reactions of bar in local system
 
-        ! Aux *************************************************************************************
+        ! Aux *****************************************************************
         real(real64), allocatable :: R(:, :)  ! Rotation matrix of bar
         real(real64), allocatable :: kl(:, :)  ! Stiffness matrix of bar in local system
         real(real64) :: EDg(dimension)  ! Element displacement in global system
@@ -132,9 +132,9 @@ contains
         integer :: si, ei  ! start and end index in start node
         integer :: sf, ef  ! start and end index in end node
 
-        ! =========================================================================================
+        ! =====================================================================
         ! Calculation
-        ! =========================================================================================
+        ! =====================================================================
         si = (dof_per_node * (this%start_node%id - 1)) + 1
         ei = si + dof_per_node - 1
 
@@ -157,22 +157,22 @@ contains
     function forces(this, dof_per_node, theory, global_displacements) result(EEl)
         !! Calculate the efforts of the bar from its reactions in local system
 
-        ! =========================================================================================
+        ! =====================================================================
         ! Vars statement
-        ! =========================================================================================
+        ! =====================================================================
         class(Bar) :: this
         integer, intent(in) :: dof_per_node  !< Degrees of freedom per node
         character(2), intent(in) :: theory  !< Theory used (Euler-Bernoulli or Timoshenko)
         real(real64), intent(in) :: global_displacements(:)  !< Displacements in global system
         real(real64), allocatable :: EEl(:)  !> The efforts of bar
 
-        ! Aux *************************************************************************************
+        ! Aux *****************************************************************
         real(real64), allocatable :: ERl(:)  ! Reactions of bar in local system
         real(real64) :: bar_length  ! Length of bar
 
-        ! =========================================================================================
+        ! =====================================================================
         ! Calculation
-        ! =========================================================================================
+        ! =====================================================================
         ERl = this%reactions(dof_per_node, theory, global_displacements)
         bar_length = this%length()
 

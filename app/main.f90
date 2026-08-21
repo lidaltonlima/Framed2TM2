@@ -20,6 +20,9 @@ program main
     ! Get data from files
     call get_structure_data(structure)
 
+    ! =========================================================================
+    ! Process
+    ! =========================================================================
     allocate(static_analysis_results)
     call static_analysis_solver_exec(structure, static_analysis_results)
 

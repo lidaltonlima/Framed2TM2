@@ -15,15 +15,15 @@ contains
     subroutine add_k(structure, K, id)
         !! Add the stiffness in the global matrix stiffness
 
-        ! =========================================================================================
+        ! =====================================================================
         ! Vars statement
-        ! =========================================================================================
-        ! I/O *************************************************************************************
+        ! =====================================================================
+        ! I/O *****************************************************************
         type(StructuralModel), intent(in) :: structure  !< The structural model
         integer, intent(in) :: id  !< index of element
         real(real64), allocatable, intent(inout) :: K(:, :)  !< Global stiffness global
 
-        ! Auxiliaries *****************************************************************************
+        ! Auxiliaries *********************************************************
         real(real64), allocatable :: EKg(:, :)  !< element stiffness matrix in global system
         real(real64), allocatable :: R(:, :)  !< Rotation matrix of bar
         integer :: si, ei  !< start and end index in initial node
@@ -32,9 +32,9 @@ contains
         integer :: start_node_id  !< Start node id of bar
         integer :: end_node_id  !< End node id of bar
 
-        ! =========================================================================================
+        ! =====================================================================
         ! Calculates
-        ! =========================================================================================
+        ! =====================================================================
         R = structure%bars(id)%rotation_matrix()
         EKg = structure%bars(id)%stiffness_matrix_local_system(structure%theory)
         EKg = matmul(matmul(transpose(R), EKg), R)
@@ -59,14 +59,14 @@ contains
     subroutine assemble_stiffness_matrix(structure, results)
         !! Calculate the global stiffness matrix
 
-        ! =========================================================================================
+        ! =====================================================================
         ! Vars statement
-        ! =========================================================================================
-        ! I/O *************************************************************************************
+        ! =====================================================================
+        ! I/O *****************************************************************
         type(StructuralModel), intent(in) :: structure  !< The structural model
         type(StaticAnalysisResults), intent(inout) :: results  !< Static analysis results
 
-        ! Aux *************************************************************************************
+        ! Aux *****************************************************************
         integer :: id  ! Id of bar
 
         if (.not. allocated(results%stiffness_matrix)) then

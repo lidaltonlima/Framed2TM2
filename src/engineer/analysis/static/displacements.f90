@@ -15,14 +15,14 @@ module solver_linear_displacements
     public :: solve_displacements
 contains
     subroutine solve_displacements(structure, results)
-        ! =========================================================================================
+        ! =====================================================================
         ! Vars statement
-        ! =========================================================================================
-        ! I/O *************************************************************************************
+        ! =====================================================================
+        ! I/O *****************************************************************
         type(StructuralModel), intent(in) :: structure  !< The structural model
         type(StaticAnalysisResults), intent(inout) :: results  !< Static analysis results
 
-        ! Aux *************************************************************************************
+        ! Aux *****************************************************************
         type(NodeSupport) :: node_support
 
         integer :: i  ! indices
@@ -31,17 +31,17 @@ contains
         integer :: Dy_index
         integer :: Rz_index
 
-        ! =========================================================================================
+        ! =====================================================================
         ! Calculation
-        ! =========================================================================================
-        ! Add boundary ****************************************************************************
+        ! =====================================================================
+        ! Add boundary ********************************************************
         call apply_supports(structure, results%stiffness_matrix, results%load_vector)
 
-        ! Solution the system *********************************************************************
+        ! Solution the system *************************************************
         call solve_symmetric_positive_definite_system( &
             results%stiffness_matrix, results%load_vector, results%displacements)
 
-        ! Sum the prescribed displacement *********************************************************
+        ! Sum the prescribed displacement *************************************
         do i = 1, structure%qtd_nodes_support
             node_support = structure%node_supports(i)
 
